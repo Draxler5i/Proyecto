@@ -2,13 +2,13 @@
   "name": "api-academia",
   "version": "1.0.0",
   "description": "training",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "ts:node": "ts-node src/index.ts",
     "dev": "nodemon",
     "build": "tsc && npm run html",
     "clean": "rm -rf build",
-    "start": "node build/src"
+    "start": "ts-node src/index.ts"
   },
   "author": "Daniel Merida",
   "license": "ISC",
@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "express": "^4.18.2",
-    "mongoose": "^6.6.6"
+    "mongoose": "^6.6.6",
+    "mysql": "^2.18.1"
   }
 }
