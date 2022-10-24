@@ -11,11 +11,11 @@ const getUsers = async () => {
     }
 }
 
-const postUsers = async (newUser:any) => {
+const postUsers = async (user: {name:string, age:number}) => {
     try {
         const res = await client.query(
             "INSERT INTO users (name_user, age) VALUES ($1, $2);",
-            [newUser.name, newUser.age]
+            [user.name, user.age]
         )
         return res 
     } catch (error) {
@@ -23,12 +23,11 @@ const postUsers = async (newUser:any) => {
     }
 }
 
-const updateUsers = async (user:any) => {
-    const { name, age, id } = user
+const updateUsers = async (user:{ name:string, age:number, id:number}) => {
     try {
         const res = await client.query(
             "UPDATE users SET name_user=$1, age=$2 WHERE id_user=$3",
-            [name, age, id]
+            [user.name, user.age, user.id]
         )
         return res
     } catch (error) {
@@ -36,7 +35,7 @@ const updateUsers = async (user:any) => {
     }
 }
 
-const deleteUsers = async (id:any) => {
+const deleteUsers = async (id:number) => {
     try {
         const res = client.query(
             "DELETE FROM users WHERE id_user = $1",

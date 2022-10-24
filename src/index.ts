@@ -3,7 +3,7 @@ const userRouter = require('./routes')
 
 // Initializations
 const app = express();
-const PORT = process.env.PORT_DEV
+const PORT = process.env.PORT_DEV;
 
 // middlewares
 app.use(express.json());
@@ -16,3 +16,4 @@ app.use('/api', userRouter)
 app.listen(PORT, () => {
     console.log(`Server on port`, PORT);
 });
+
