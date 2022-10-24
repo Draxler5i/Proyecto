@@ -1,37 +1,18 @@
-import express, { response } from 'express';
+const express = require('express')
+const userRouter = require('./routes')
 
 // Initializations
 const app = express();
-
-const users: any = [];
-
-// settings
-app.set('port', 4000);
+const PORT = process.env.PORT_DEV
 
 // middlewares
 app.use(express.json());
+app.use(express.urlencoded({extended: false}));
 
 // Routes
-app.get('/users', (req: any, res: any) => {
-    res.json(users);
-});
-app.post('/users', (req: any, res: any) => {
-    const user = req.body;
-    users.push(user);
-    res.json(user);
-});
-app.put('/users/:id', (req: any, res: any) => {
-    const user = req.body;
-    users.push(user);
-    res.json(user);
-});
-app.delete('/users/:id', (req: any, res: any) => {
-    const userDeleted = users.pop();
-    res.json(userDeleted);
-
-});
+app.use('/api', userRouter)
 
 // Starting the Server
-app.listen(app.get('port'), () => {
-    console.log(`Server on port`, app.get('port'));
+app.listen(PORT, () => {
+    console.log(`Server on port`, PORT);
 });

@@ -8,7 +8,7 @@
     "dev": "nodemon",
     "build": "tsc && npm run html",
     "clean": "rm -rf build",
-    "start": "node build/src"
+    "start": "ts-node src/index.ts"
   },
   "author": "Daniel Merida",
   "license": "ISC",
@@ -21,7 +21,10 @@
     "typescript": "^3.9.10"
   },
   "dependencies": {
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "mongoose": "^6.6.6"
+    "mongoose": "^6.6.6",
+    "pg": "^8.8.0"
   }
 }
