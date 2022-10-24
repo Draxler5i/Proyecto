@@ -2,7 +2,7 @@ import express, { response } from 'express';
 
 // Initializations
 const app = express();
-
+const { Client } = require('pg')
 const users: any = [];
 
 // settings
