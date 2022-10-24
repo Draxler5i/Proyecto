@@ -2,33 +2,49 @@ const client = require('../database/conection')
 
 const getUsers = async () => {
     try {
-        return 'Hello'
+        const res = await client.query(
+            "SELECT * FROM users;"
+        )
+        return res.rows;
     } catch (error) {
-        console.log(error)
+        throw error
     }
 }
 
-const postUsers = async () => {
+const postUsers = async (newUser:any) => {
     try {
-        return 'Hello'
+        const res = await client.query(
+            "INSERT INTO users (name_user, age) VALUES ($1, $2);",
+            [newUser.name, newUser.age]
+        )
+        return res 
     } catch (error) {
-        console.log(error)
+        throw error
     }
 }
 
-const updateUsers = async () => {
+const updateUsers = async (user:any) => {
+    const { name, age, id } = user
     try {
-        return 'Hello'
+        const res = await client.query(
+            "UPDATE users SET name_user=$1, age=$2 WHERE id_user=$3",
+            [name, age, id]
+        )
+        return res
     } catch (error) {
-        console.log(error)
+        throw error
     }
 }
 
-const deleteUsers = async () => {
+const deleteUsers = async (id:any) => {
     try {
-        return 'Hello'
+        const res = client.query(
+            "DELETE FROM users WHERE id_user = $1",
+            [id]
+        )
+        return res
     } catch (error) {
-        console.log(error)
+        throw error
     }
 }
 module.exports = {
