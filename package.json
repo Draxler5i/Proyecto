@@ -1,28 +1,21 @@
 {
-  "name": "api-academia",
+  "name": "prueba-mongo2",
   "version": "1.0.0",
-  "description": "training",
+  "description": "",
   "main": "index.js",
   "scripts": {
-    "ts:node": "ts-node src/index.ts",
-    "dev": "nodemon",
-    "build": "tsc && npm run html",
-    "clean": "rm -rf build",
-    "start": "node build/src"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon server.js"
   },
-  "author": "Daniel Merida",
+  "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "@types/express": "^4.17.14",
-    "@types/mongodb": "^4.0.7",
-    "@types/mongoose": "^5.3.5",
-    "@types/node": "^10.17.60",
-    "nodemon": "^1.18.9",
-    "ts-node": "^7.0.1",
-    "typescript": "^3.9.10"
-  },
   "dependencies": {
+    "body-parser": "^1.20.1",
+    "dotenv": "^10.0.0",
     "express": "^4.18.2",
-    "mongoose": "^6.6.6"
+    "mongodb": "^4.11.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
   }
 }
