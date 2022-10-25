@@ -3,9 +3,9 @@ const userService = require('../services/user.service')
 const getAllUsers = async (req:any, res:any) => {
     try {
       const data = await userService.getUsers()
-      res.send({ status: "OK", data: data });
+      res.send({ status: "OK", data });
     } catch (error) {
-        console.log(error)
+        res.send({ status:"FAILED", data: { error }})
     }
 }
 
@@ -23,7 +23,7 @@ const postNewUser = async (req:any, res:any) => {
         const data = await userService.postUsers(req.body)
         res.status(201).send({status: "OK", data:data.command, message:`User created`})
     } catch (error) {
-        res.send({status:"FAILED", data:error})
+        res.send({ status:"FAILED", data: { error }})
     }
 }
 
@@ -35,7 +35,7 @@ const updateUser = async (req:any, res:any) => {
         const data = await userService.updateUsers({id, name, age})
         res.status(200).send({status:"OK", data:data.command, message:`User updated with ID:${id}`})
     } catch (error) {
-        console.log(error)
+        res.send({ status:"FAILED", data: { error }})
     }
 }
 
@@ -45,7 +45,7 @@ const deleteUser = async (req:any, res:any) => {
         const data = await userService.deleteUsers(id)
         res.status(200).send({status:"OK", data:data.command, message:`User deleted with ID:${id}`})
     } catch (error) {
-        console.log(error)
+        res.send({ status:"FAILED", data: { error }})
     }
 }
 
