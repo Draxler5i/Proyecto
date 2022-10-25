@@ -1,17 +1,5 @@
-import express from 'express'
-import 'dotenv/config'
 import { QueryResult } from 'pg'
-// Initializations
-const app = express()
-const users: any = []
-const { Client } = require('pg')
-const client = new Client({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASS,
-    port: process.env.DB_PORT
-})
+const client = require('../postgres/conn')
 client.connect()
 
 const getUsers = async (_req: Express.Request, res: Express.Response) => {
@@ -83,19 +71,9 @@ const deleteUser = (request: Express.Request, response: Express.Response) => {
         throw (e)
     }
 }
-
-const PORT = process.env.SERVER_PORT || 4001
-console.log(PORT)
-app.set('port', PORT)
-
-// middlewares
-app.use(express.json())
-app.get('/users', getUsers)
-app.post('/users', createUser)
-app.put('/users/:id', updateUser)
-app.delete('/users/:id', deleteUser)
-
-// Starting the Server
-app.listen(app.get('port'), () => {
-    console.log(`Server on port`, app.get('port'))
-});
+module.exports = {
+    getUsers,
+    createUser,
+    updateUser,
+    deleteUser,
+}
