@@ -38,7 +38,7 @@ const deleteTickets = async (id: number) => {
     try {
         const res = client.query(
             "DELETE FROM tickets WHERE id= $1",
-            [id]
+            id
         );
         return res
     } catch (error) {
