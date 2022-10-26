@@ -1,37 +1,24 @@
-import express, { response } from 'express';
+import express from 'express'
+import 'dotenv/config'
+import { QueryResult } from 'pg'
+const userServices = require('./services/service')
 
 // Initializations
-const app = express();
-
-const users: any = [];
-
-// settings
-app.set('port', 4000);
+const app = express()
+const PORT = process.env.SERVER_PORT || 4001
 
 // middlewares
-app.use(express.json());
-
-// Routes
-app.get('/users', (req: any, res: any) => {
-    res.json(users);
-});
-app.post('/users', (req: any, res: any) => {
-    const user = req.body;
-    users.push(user);
-    res.json(user);
-});
-app.put('/users/:id', (req: any, res: any) => {
-    const user = req.body;
-    users.push(user);
-    res.json(user);
-});
-app.delete('/users/:id', (req: any, res: any) => {
-    const userDeleted = users.pop();
-    res.json(userDeleted);
-
-});
+app.use(express.json())
+app.get('/users', userServices.getUsers)
+app.get('/ticket', userServices.getTicket)
+app.post('/users', userServices.createUser)
+app.post('/ticket', userServices.createTicket)
+app.put('/users/:id', userServices.updateUser)
+app.put('/ticket/:id', userServices.updateTicket)
+app.delete('/users/:id', userServices.deleteUser)
+app.delete('/ticket/:id', userServices.deleteTicket)
 
 // Starting the Server
-app.listen(app.get('port'), () => {
-    console.log(`Server on port`, app.get('port'));
+app.listen(PORT, () => {
+    console.log(`Server on port`, PORT)
 });
