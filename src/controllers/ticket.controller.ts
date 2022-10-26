@@ -34,7 +34,7 @@ const updateTicket = async (req:any, res:any) => {
         res.status(400).send({
             status: "FAILED",
             data:{
-                error: "ID is missing or are empty"
+                error: "ID is missing or is empty"
             }
         })
     }
@@ -52,7 +52,7 @@ const deleteTicket = async (req:any, res:any) => {
         res.status(400).send({
             status: "FAILED",
             data:{
-                error: "ID is missing or are empty"
+                error: "ID is missing or is empty"
             }
         })
     }

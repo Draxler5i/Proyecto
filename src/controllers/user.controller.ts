@@ -11,7 +11,7 @@ const getAllUsers = async (req:any, res:any) => {
 }
 
 const postNewUser = async (req:any, res:any) => {
-    const { name, email, cellphone, state } = req.body
+    const { name, email, cellphone } = req.body
     if(!name || !email || !cellphone){
         res.status(400).send({
             status: "FAILED",
@@ -21,7 +21,7 @@ const postNewUser = async (req:any, res:any) => {
         })
     }
     try {
-        const data = await userService.postUsers(req.body)
+        await userService.postUsers(req.body)
         res.status(201).send({status: "OK", message:`User created`})
     } catch (error) {
         res.send({ status:"FAILED", data: { error }})
@@ -34,7 +34,7 @@ const updateUser = async (req:any, res:any) => {
         res.status(400).send({
             status: "FAILED",
             data:{
-                error: "ID is missing or are empty"
+                error: "ID is missing or is empty"
             }
         })
     }
@@ -52,7 +52,7 @@ const deleteUser = async (req:any, res:any) => {
         res.status(400).send({
             status: "FAILED",
             data:{
-                error: "ID is missing or are empty"
+                error: "ID is missing or is empty"
             }
         })
     }

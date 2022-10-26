@@ -8,5 +8,4 @@ router
     .put('/:id', userController.updateUser)
     .delete('/:id', userController.deleteUser)
 
-
 export = router

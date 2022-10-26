@@ -1,6 +1,3 @@
-const mongoose = require('mongoose')
+import mongoose from "mongoose"
 
-mongoose.connect(process.env.MONGODB_URI,  {
-    useUnifiedTopology:true, 
-    useNewUrlParser:true,
-})
+mongoose.connect(`${process.env.MONGODB_URI}`)
