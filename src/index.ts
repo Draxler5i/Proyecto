@@ -1,20 +1,20 @@
 import express from 'express'
 import 'dotenv/config'
-import { QueryResult } from 'pg'
-const userServices = require('./services/service')
+import {getUsers, getTicket, createUser, createTicket, updateUser, updateTicket, deleteUser, deleteTicket} from './services/service'
 
-// Initializations
 const app = express()
 const PORT = process.env.SERVER_PORT || 4001
 
-// middlewares
 app.use(express.json())
-app.get('/users', userServices.getUsers)
-app.post('/users', userServices.createUser)
-app.put('/users/:id', userServices.updateUser)
-app.delete('/users/:id', userServices.deleteUser)
+app.get('/users', getUsers)
+app.get('/ticket', getTicket)
+app.post('/users', createUser)
+app.post('/ticket', createTicket)
+app.put('/users/:id', updateUser)
+app.put('/ticket/:id', updateTicket)
+app.delete('/users/:id', deleteUser)
+app.delete('/ticket/:id', deleteTicket)
 
-// Starting the Server
 app.listen(PORT, () => {
     console.log(`Server on port`, PORT)
 });
