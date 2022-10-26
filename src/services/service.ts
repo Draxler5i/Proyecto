@@ -13,9 +13,9 @@ declare namespace Express {
 }
 
 //GET
-const getUsers = async (_req: Express.Request, res: Express.Response) => {
+const getUsers = (_req: Express.Request, res: Express.Response) => {
     try {
-        await client.query('SELECT * from users', (error: Error, result: QueryResult) => {
+        client.query('SELECT * from users', (error: Error, result: QueryResult) => {
             if (error) {
                 throw error
             }
@@ -28,9 +28,9 @@ const getUsers = async (_req: Express.Request, res: Express.Response) => {
 }
 
 
-const getTicket = async (_req: Express.Request, res: Express.Response) => {
+const getTicket = (_req: Express.Request, res: Express.Response) => {
     try {
-        await client.query('SELECT * from ticket', (error: Error, result: QueryResult) => {
+        client.query('SELECT * from ticket', (error: Error, result: QueryResult) => {
             if (error) {
                 throw error
             }
@@ -43,10 +43,10 @@ const getTicket = async (_req: Express.Request, res: Express.Response) => {
 }
 
 //POST
-const createUser = async (request: Express.Request, response: Express.Response) => {
+const createUser = (request: Express.Request, response: Express.Response) => {
     const { name, email, cellphone, age, address, created, country, state } = request.body
     try {
-        await client.query('INSERT INTO users (name, email, cellphone, age, address, created, country, state) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *', [name, email, cellphone, age, address, created, country, state], (error: Error, results: QueryResult) => {
+        client.query('INSERT INTO users (name, email, cellphone, age, address, created, country, state) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *', [name, email, cellphone, age, address, created, country, state], (error: Error, results: QueryResult) => {
             if (error) {
                 throw error
             }
@@ -58,10 +58,10 @@ const createUser = async (request: Express.Request, response: Express.Response) 
     }
 }
 
-const createTicket = async (request: Express.Request, response: Express.Response) => {
+const createTicket = (request: Express.Request, response: Express.Response) => {
     const { price, category, match_date, stadium, created } = request.body
     try {
-        await client.query('INSERT INTO ticket ( price, category, match_date, stadium, created) VALUES ($1, $2, $3, $4, $5) RETURNING *', [ price, category, match_date, stadium, created], (error: Error, results: QueryResult) => {
+        client.query('INSERT INTO ticket ( price, category, match_date, stadium, created) VALUES ($1, $2, $3, $4, $5) RETURNING *', [ price, category, match_date, stadium, created], (error: Error, results: QueryResult) => {
             if (error) {
                 throw error
             }
@@ -74,35 +74,35 @@ const createTicket = async (request: Express.Request, response: Express.Response
 }
 
 //PUT
-const updateUser = async (request: Express.Request, response: Express.Response) => {
+const updateUser = (request: Express.Request, response: Express.Response) => {
     const id = parseInt(request.params.id)
     const { name, email, cellphone, age, address, country, state } = request.body
     try {
-        await client.query('UPDATE users SET name = $1, email = $2, cellphone = $3, age= $4, address = $5, country = $6, state = $7 WHERE user_id = $8', [name, email, cellphone, age, address, country, state, id], (error: Error, results: QueryResult) => {
+        client.query('UPDATE users SET name = $1, email = $2, cellphone = $3, age= $4, address = $5, country = $6, state = $7 WHERE user_id = $8', [name, email, cellphone, age, address, country, state, id], (error: Error, results: QueryResult) => {
             if (error) {
                 throw error
             }
             response.status(200).send(`User modified with ID: ${id}, name: ${name}, email: ${email}, cellphone: ${cellphone}, age: ${age}, address: ${address}, country: ${country}, state: ${state}`)
         })
-    } catch (e) {
-        console.log(e)
-        throw (e)
+    } catch (error) {
+        console.log(error)
+        throw (error)
     }
 }
 
-const updateTicket = async (request: Express.Request, response: Express.Response) => {
+const updateTicket = (request: Express.Request, response: Express.Response) => {
     const id = parseInt(request.params.id)
     const { price, category, match_date, stadium, created } = request.body
     try {
-        await client.query('UPDATE ticket SET price = $1, category = $2, match_date = $3, stadium= $4, created = $5 WHERE ticket_id = $6', [price, category, match_date, stadium, created, id], (error: Error, results: QueryResult) => {
+         client.query('UPDATE ticket SET price = $1, category = $2, match_date = $3, stadium= $4, created = $5 WHERE ticket_id = $6', [price, category, match_date, stadium, created, id], (error: Error, results: QueryResult) => {
             if (error) {
                 throw error
             }
             response.status(200).send(`User modified with ID: ${id}, price: ${price}, category: ${category}, match_date: ${match_date}, stadium: ${stadium}, created: ${created}`)
         })
-    } catch (e) {
-        console.log(e)
-        throw (e)
+    } catch (error) {
+        console.log(error)
+        throw (error)
     }
 }
 
@@ -116,9 +116,9 @@ const deleteUser = (request: Express.Request, response: Express.Response) => {
             }
             response.status(200).send(`User deleted with ID: ${id}`)
         })
-    } catch (e) {
-        console.log(e)
-        throw (e)
+    } catch (error) {
+        console.log(error)
+        throw (error)
     }
 }
 
@@ -131,9 +131,9 @@ const deleteTicket = (request: Express.Request, response: Express.Response) => {
             }
             response.status(200).send(`User deleted with ID: ${id}`)
         })
-    } catch (e) {
-        console.log(e)
-        throw (e)
+    } catch (error) {
+        console.log(error)
+        throw (error)
     }
 }
 
