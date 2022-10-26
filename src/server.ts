@@ -1,17 +1,17 @@
 require('dotenv').config()
-const express = require('express')
-const bodyParser= require('body-parser');
-const app = express()
-require('./database/conection')
-const userRouter = require('./routers/user.router')
-const ticketRouter = require('./routers/ticket.router')
+import './database/conection'
+import express from 'express'
+import userRouter from './routers/user.router'
+import ticketRouter from './routers/ticket.router'
 
-app.use(express.json());
-app.use(express.urlencoded({extended: false}));
+const app = express()
+
+app.use(express.json())
+app.use(express.urlencoded({extended: false}))
 const { PORT_DEV } = process.env
 
-app.use('/api', userRouter)
-app.use('/api', ticketRouter)
+app.use('/api/users', userRouter)
+app.use('/api/tickets', ticketRouter)
 
 app.listen(PORT_DEV, ()=> {
   console.log(`Server on port ${PORT_DEV}`)

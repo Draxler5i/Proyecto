@@ -12,7 +12,7 @@ const getAllUsers = async (req:any, res:any) => {
 
 const postNewUser = async (req:any, res:any) => {
     const { name, email, cellphone, state } = req.body
-    if(!name || !email || !cellphone || !state){
+    if(!name || !email || !cellphone){
         res.status(400).send({
             status: "FAILED",
             data:{
@@ -29,40 +29,44 @@ const postNewUser = async (req:any, res:any) => {
 }
 
 const updateUser = async (req:any, res:any) => {
-    let user = req.body.products[0];
+    const { id } = req.params
+    if(!id){
+        res.status(400).send({
+            status: "FAILED",
+            data:{
+                error: "ID is missing or are empty"
+            }
+        })
+    }
     try {
-        const data = await userService.updateUsers(user, req.body)
-        res.status(200).send({status:"OK", data, message:`User updated`})
+        const data = await userService.updateUsers(id, req.body)
+        res.status(200).send({status:"OK", data, message:`User updated with ID:${id}`})
     } catch (error) {
         res.send({ status:"FAILED", data: { error }})
     }
 }
 
 const deleteUser = async (req:any, res:any) => {
-    const id = parseInt(req.params.id)
+    const { id } = req.params
+    if(!id){
+        res.status(400).send({
+            status: "FAILED",
+            data:{
+                error: "ID is missing or are empty"
+            }
+        })
+    }
     try {
         const data = await userService.deleteUsers(id)
-        //res.status(200).send({status:"OK", data:data.command, message:`User deleted with ID:${id}`})
+        res.status(200).send({status:"OK", data, message:`User deleted with ID:${id}`})
     } catch (error) {
         res.send({ status:"FAILED", data: { error }})
     }
 }
-const findUser = async (req:any, res:any) => {
-    // const id = parseInt(req.params.id)
-    // try {
-    //     const data = await userService.deleteUsers(id)
-    //     //res.status(200).send({status:"OK", data:data.command, message:`User deleted with ID:${id}`})
-    // } catch (error) {
-    //     res.send({ status:"FAILED", data: { error }})
-    // }
-}
-
-
 
 export = {
     getAllUsers,
     postNewUser, 
     updateUser,
-    deleteUser,
-    findUser
+    deleteUser
 }

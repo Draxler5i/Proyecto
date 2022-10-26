@@ -1,9 +1,8 @@
-//const client = require('../database/conection')
 import User from '../models/User'
 
 const getUsers = async () => {
     try {
-       return await User.find({})
+       return await User.find()
     } catch (error) {
         throw error
     }
@@ -19,35 +18,25 @@ const postUsers = async (user: {name:string, age:number, email:string, cellphone
     }
 }
 
-const updateUsers = async (user:any, body:any) => {
+const updateUsers = async (id:string, user:any) => {
     try {
-        user = await Object.assign(user, body);
-        return await user.save()
-
+        return await User.updateOne({ _id:id }, { $set: user})
     } catch (error) {
         throw error
     }
 }
 
-const deleteUsers = async (id:number) => {
+const deleteUsers = async (id:string) => {
     try {
-        
+        return await User.remove({_id: id})
     } catch (error) {
         throw error
     }
 }
 
-const findUser = async (id:number) => {
-    try {
-        
-    } catch (error) {
-        throw error
-    }
-}
 export = {
     getUsers, 
     postUsers, 
     updateUsers, 
-    deleteUsers,
-    findUser,
+    deleteUsers
 }

@@ -3,10 +3,10 @@ import userController from '../controllers/user.controller'
 const router = Router()
 
 router
-    .get('/users', userController.getAllUsers)
-    .post('/users', userController.postNewUser)
-    .put('/:key/:value', userController.findUser, userController.updateUser)
-    .delete('/:key/:value', userController.findUser, userController.deleteUser)
+    .get('/', userController.getAllUsers)
+    .post('/', userController.postNewUser)
+    .put('/:id', userController.updateUser)
+    .delete('/:id', userController.deleteUser)
 
 
 export = router
