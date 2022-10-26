@@ -9,17 +9,6 @@ const getTickets = async () => {
     };
 }
 
-const getTicketByUserById = async (id: number) => {
-    try {
-        const res = await client.query(
-            "SELECT * FROM tickets WHERE user_id =$1"
-            [id]
-        )
-        return res
-    } catch (error) {
-        throw error
-    };
-}
 
 const postTickets = async (tickets: { category: string, stadio: string, matchDate: Date, price: number }) => {
     try {
@@ -59,7 +48,6 @@ const deleteTickets = async (id: number) => {
 
 module.exports = {
     getTickets,
-    getTicketByUserById,
     postTickets,
     updateTickets,
     deleteTickets,
