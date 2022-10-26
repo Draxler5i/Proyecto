@@ -1,24 +1,7 @@
 import { QueryResult } from 'pg'
-const client = require('../postgres/conn')
+const client = require('../postgres/dbConnection')
 client.connect()
 
-//GET
-
-const getUsers = async (_req: Express.Request, res: Express.Response) => {
-    try {
-        await client.query('SELECT * from users', (error: Error, result: QueryResult) => {
-            if (error) {
-                throw error
-            }
-            // res.status(200).json(result['rows'])
-            res.status(200).json(result)
-        })
-    } catch (e) {
-        console.log(e)
-        throw (e)
-    }
-
-}
 declare namespace Express {
     export interface Request {
         body: any;
@@ -28,6 +11,22 @@ declare namespace Express {
         status: any;
     }
 }
+
+//GET
+const getUsers = async (_req: Express.Request, res: Express.Response) => {
+    try {
+        await client.query('SELECT * from users', (error: Error, result: QueryResult) => {
+            if (error) {
+                throw error
+            }
+            res.status(200).json(result)
+        })
+    } catch (e) {
+        console.log(e)
+        throw (e)
+    }
+}
+
 
 const getTicket = async (_req: Express.Request, res: Express.Response) => {
     try {
@@ -35,27 +34,15 @@ const getTicket = async (_req: Express.Request, res: Express.Response) => {
             if (error) {
                 throw error
             }
-            // res.status(200).json(result['rows'])
             res.status(200).json(result)
         })
     } catch (e) {
         console.log(e)
         throw (e)
     }
-
-}
-declare namespace Express {
-    export interface Request {
-        body: any;
-        params: any;
-    }
-    export interface Response {
-        status: any;
-    }
 }
 
 //POST
-
 const createUser = async (request: Express.Request, response: Express.Response) => {
     const { name, email, cellphone, age, address, created, country, state } = request.body
     try {
@@ -69,7 +56,6 @@ const createUser = async (request: Express.Request, response: Express.Response) 
         console.log(e)
         throw (e)
     }
-
 }
 
 const createTicket = async (request: Express.Request, response: Express.Response) => {
@@ -85,11 +71,9 @@ const createTicket = async (request: Express.Request, response: Express.Response
         console.log(e)
         throw (e)
     }
-
 }
 
 //PUT
-
 const updateUser = async (request: Express.Request, response: Express.Response) => {
     const id = parseInt(request.params.id)
     const { name, email, cellphone, age, address, country, state } = request.body
@@ -99,8 +83,7 @@ const updateUser = async (request: Express.Request, response: Express.Response) 
                 throw error
             }
             response.status(200).send(`User modified with ID: ${id}, name: ${name}, email: ${email}, cellphone: ${cellphone}, age: ${age}, address: ${address}, country: ${country}, state: ${state}`)
-        }
-        )
+        })
     } catch (e) {
         console.log(e)
         throw (e)
@@ -116,8 +99,7 @@ const updateTicket = async (request: Express.Request, response: Express.Response
                 throw error
             }
             response.status(200).send(`User modified with ID: ${id}, price: ${price}, category: ${category}, match_date: ${match_date}, stadium: ${stadium}, created: ${created}`)
-        }
-        )
+        })
     } catch (e) {
         console.log(e)
         throw (e)
@@ -125,7 +107,6 @@ const updateTicket = async (request: Express.Request, response: Express.Response
 }
 
 //DELETE
-
 const deleteUser = (request: Express.Request, response: Express.Response) => {
     const id = parseInt(request.params.id)
     try {
@@ -155,13 +136,5 @@ const deleteTicket = (request: Express.Request, response: Express.Response) => {
         throw (e)
     }
 }
-module.exports = {
-    getUsers,
-    getTicket,
-    createUser,
-    createTicket,
-    updateUser,
-    updateTicket,
-    deleteUser,
-    deleteTicket
-}
+
+export {getUsers, getTicket, createUser, createTicket, updateUser, updateTicket, deleteUser, deleteTicket}
