@@ -49,7 +49,7 @@ const updateUsers = async (user: {name:string, age:number, email:string, passwor
 
 const deleteUsers = async (id:number) => {
     try {
-        const res = client.query(
+        const res = await client.query(
             "DELETE FROM users WHERE id_user = $1",
             [id]
         )
@@ -58,10 +58,24 @@ const deleteUsers = async (id:number) => {
         throw error
     }
 }
+
+const existUser = async (email:string) => {
+    try {
+        const res = await client.query(
+            "SELECT * FROM users WHERE email = $1",
+            [email]
+        )
+        return res.rows
+    } catch (error) {
+        throw error
+    }   
+}
+
 export = {
     getUsers, 
     getOneUser,
     postUsers, 
     updateUsers, 
     deleteUsers,
+    existUser,
 }

@@ -27,24 +27,6 @@ const getUser = async (req:any, res:any) => {
     }
 }
 
-const postNewUser = async (req:any, res:any) => {
-    const { name, lastname, email, password } = req.body
-    if(!name || !lastname || !email || !password){
-        res.status(400).send({
-            status: "FAILED",
-            data:{
-                error: "Some attributes are missing or are empty"
-            }
-        })
-    }
-    try {
-        const data = await userService.postUsers(req.body)
-        res.status(201).send({status: "OK", data:data.command, message:`User created`})
-    } catch (error) {
-        res.send({ status:"FAILED", data: { error }})
-    }
-}
-
 const updateUser = async (req:any, res:any) => {
     const id = parseInt(req.params.id)
     if(!id){
@@ -85,7 +67,6 @@ const deleteUser = async (req:any, res:any) => {
 export = {
     getAllUsers,
     getUser,
-    postNewUser, 
     updateUser,
     deleteUser
 }

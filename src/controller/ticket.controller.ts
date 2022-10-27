@@ -37,6 +37,9 @@ const postNewTicket = async (req: any, res: any) => {
             }
         })
     }
+    req.body.matchDay = new Date(matchDay)
+    req.body.created = new Date(Date.now())
+    console.log(req.body)
     try {
         const data = await ticketService.postTickets(req.body)
         res.status(201).send({status: "OK", data:data.command, message:`Ticket created`})
