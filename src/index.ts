@@ -20,7 +20,7 @@ app.put('/users/:id', auth, services.updateUser)
 app.put('/ticket/:id', auth, services.updateTicket)
 app.delete('/users/:id', auth, services.deleteUser)
 app.delete('/ticket/:id', auth, services.deleteTicket)
-app.post('/v1/login', auth, services.login)
+app.post('/v1/login', services.login)
 app.get('/home', auth, services.home)
 app.post("/welcome", auth, services.welcome)
 app.listen(PORT, () => {

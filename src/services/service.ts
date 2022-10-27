@@ -1,6 +1,8 @@
 import { QueryResult } from 'pg'
 const jwt = require('jsonwebtoken')
 const client = require('../postgres/connection')
+const validate = require('./validationFunctions')
+
 client.connect()
 //GET
 const getUsers = (_req: Express.Request, res: Express.Response) => {
@@ -29,26 +31,12 @@ const getTicket = (_req: Express.Request, res: Express.Response) => {
         throw (e)
     }
 }
-//nalidation functions
-function validateEmail(email: string) {
-    // Define our regular expression.
-    var validEmail = /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/
-    if (validEmail.test(email)) {
-        return true
-    } else {
-        return false
-    }
-}
-function validatePass(password: string) {
-    if (password.length >= 6 && /[0-9]/.test(password)) return true
-    return false
-}
 //POST
 const createUser = (request: Express.Request, response: Express.Response) => {
     const { name, last_name, email, password, age, tickets_id } = request.body
-    if (validateEmail(email) && age >= 18) {
-        if (validateEmail(email) && age >= 18) {
-            if (validatePass(password)) {
+    if (validate.validateEmail(email)) {
+        if (age >= 18) {
+            if (validate.validatePass(password)) {
                 try {
                     client.query('INSERT INTO public.user(name, last_name, email, password, age, tickets_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [name, last_name, email, password, age, tickets_id], (error: Error, results: QueryResult) => {
                         if (error) {
