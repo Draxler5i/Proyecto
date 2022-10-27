@@ -1,20 +1,7 @@
-import { Session } from 'inspector';
 import { QueryResult } from 'pg'
+const jwt = require('jsonwebtoken')
 const client = require('../postgres/connection')
 client.connect()
-
-declare namespace Express {
-    export interface Request {
-        body: any;
-        params: any;
-        session: any
-    }
-    export interface Response {
-        [x: string]: any;
-        status: any;
-    }
-}
-
 //GET
 const getUsers = (_req: Express.Request, res: Express.Response) => {
     try {
@@ -29,8 +16,6 @@ const getUsers = (_req: Express.Request, res: Express.Response) => {
         throw (e)
     }
 }
-
-
 const getTicket = (_req: Express.Request, res: Express.Response) => {
     try {
         client.query('SELECT * from ticket', (error: Error, result: QueryResult) => {
@@ -44,15 +29,14 @@ const getTicket = (_req: Express.Request, res: Express.Response) => {
         throw (e)
     }
 }
-
 //nalidation functions
 function validateEmail(email: string) {
     // Define our regular expression.
-    var validEmail = /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/;
+    var validEmail = /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/
     if (validEmail.test(email)) {
-        return true;
+        return true
     } else {
-        return false;
+        return false
     }
 }
 function validatePass(password: string) {
@@ -76,14 +60,10 @@ const createUser = (request: Express.Request, response: Express.Response) => {
                     console.log(e)
                     throw (e)
                 }
-
-
             } else {
                 response.send('Paswword must be minimum of 6 characters and contain at least one number')
             }
-
         } else { response.send('Age not valid, must be =>18') }
-
     } else {
         response.send('Not valid email. ')
     }
@@ -102,24 +82,22 @@ const createTicket = (request: Express.Request, response: Express.Response) => {
         throw (e)
     }
 }
-
 //PUT
 const updateUser = (request: Express.Request, response: Express.Response) => {
     const id = parseInt(request.params.id)
-    const { name, lastname, email, password, age, tickets_id } = request.body
+    const { name, last_name, email, password, age, tickets_id } = request.body
     try {
-        client.query('UPDATE public.user SET name = $1, lastname = $2, email = $3, password = $4, age = $5, tickets_id = $6 WHERE user_id = $7', [name, lastname, email, password, age, tickets_id, id], (error: Error, results: QueryResult) => {
+        client.query('UPDATE public.user SET name = $1, last_name = $2, email = $3, password = $4, age = $5, tickets_id = $6 WHERE user_id = $7', [name, last_name, email, password, age, tickets_id, id], (error: Error, results: QueryResult) => {
             if (error) {
                 throw error
             }
-            response.status(200).send(`User modified with ID: ${id}, name: ${name} ${lastname}, email: ${email}, password: ${password}, age: ${age}, ticket_id: ${tickets_id}`)
+            response.status(200).send(`User modified with ID: ${id}, name: ${name} ${last_name}, email: ${email}, password: ${password}, age: ${age}, ticket_id: ${tickets_id}`)
         })
     } catch (error) {
         console.log(error)
         throw (error)
     }
 }
-
 const updateTicket = (request: Express.Request, response: Express.Response) => {
     const id = parseInt(request.params.id)
     const { price, currency, match_day, stadium_name } = request.body
@@ -135,7 +113,6 @@ const updateTicket = (request: Express.Request, response: Express.Response) => {
         throw (error)
     }
 }
-
 //DELETE
 const deleteUser = (request: Express.Request, response: Express.Response) => {
     const id = parseInt(request.params.id)
@@ -151,7 +128,6 @@ const deleteUser = (request: Express.Request, response: Express.Response) => {
         throw (error)
     }
 }
-
 const deleteTicket = (request: Express.Request, response: Express.Response) => {
     const id = parseInt(request.params.id)
     try {
@@ -167,37 +143,44 @@ const deleteTicket = (request: Express.Request, response: Express.Response) => {
     }
 }
 const login = (req: Express.Request, res: Express.Response) => {
-    // Insert Login Code Here
-    const { email, password } = req.body;
+    const { email, password } = req.body
     if (email && password) {
-        // Execute SQL query that'll select the account from the database based on the specified username and password
         client.query('SELECT * FROM public.user WHERE email = $1 AND password = $2', [email, password], (error: Error, results: QueryResult) => {
-            // If there is an issue with the query, output the error
-            if (error) throw error;
-            // If the account exists
+            if (error) throw error
             if (results['rows'].length > 0) {
                 // Authenticate the user
-                req.session.loggedin = true;
-                req.session.email = email;
-                // Redirect to home page
-                res.redirect('/home');
+                req.session.loggedin = true
+                req.session.email = email
+                const token = jwt.sign(
+                    { email, password },
+                    process.env.TOKEN,
+                    {
+                        expiresIn: "1h",
+                    }
+                )
+                console.log('holiiiiiiii')
+                console.log(token)
+                let json = {
+                    token_access: token,
+                }
+                res.send(json)
             } else {
-                res.send('Incorrect email and/or Password!');
+                res.send('Incorrect email and/or Password!')
             }
-        });
+        })
     } else {
-        res.send('Please enter email and Password!');
+        res.send('Please enter email and Password!')
     }
-    //res.send(`Username: ${username} Password: ${password}`);
-};
+}
 const home = (req: Express.Request, res: Express.Response) => {
     // If the user is loggedin
     if (req.session.loggedin) {
-        // Output username
-        res.send('Welcome back, ' + req.session.email + '!');
+        res.send('Welcome back, ' + req.session.email + '!')
     } else {
-        // Not logged in
-        res.send('Please login to view this page!');
+        res.send('Please login to view this page!')
     }
-};
-module.exports = { getUsers, createUser, deleteUser, updateUser, getTicket, createTicket, deleteTicket, updateTicket, login, home }
+}
+const welcome = (req: Express.Request, res: Express.Response) => {
+    res.status(200).send("Welcome 🙌 ")
+}
+module.exports = { getUsers, createUser, deleteUser, updateUser, getTicket, createTicket, deleteTicket, updateTicket, login, home, welcome }

@@ -1,6 +1,6 @@
 import 'dotenv/config'
 
-const { Client } = require('pg');
+const { Client } = require('pg')
 
 const clients = new Client({
     user: process.env.DB_USER,
@@ -8,6 +8,6 @@ const clients = new Client({
     password: process.env.DB_PASS,
     database: process.env.DB_NAME,
     port: process.env.DB_PORT
-});
+})
 
 module.exports = clients
