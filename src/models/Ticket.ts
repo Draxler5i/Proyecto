@@ -5,19 +5,23 @@ const TicketSchema = new Schema({
         type: Number,
         required: true
     },
-    category: {
+    currency: {
         type: String,
         required: true
     },
-    match_date: {
+    match_day: {
         type: Date,
         required: true
     },
-    stadio: {
+    stadium_id: {
         type: String,
         required: true
     },
-    user_id: {
+    stadium_name: {
+        type: String,
+        required: true
+    },
+    seat: {
         type: String,
         required: true
     }

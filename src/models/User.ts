@@ -5,30 +5,26 @@ const UserSchema = new Schema({
         type: String,
         required: true
     },
+    last_name: {
+        type: String,
+        required: true
+    },
     email: {
         type: String,
         required: true
     },
-    cellphone: {
-        type: Number,
+    password: {
+        type: String,
         required: true
     },
-    age: {
-        type: Number,
+    birthday: {
+        type: Date,
         required: false
     },
-    address: {
+    ticket_id: {
         type: String,
         required: false
-    },
-    country: {
-        type: String,
-        required: false
-    },
-    state: {
-        type: Boolean,
-        required: true
-    },
+    }
 }, {
     timestamps:true
 })

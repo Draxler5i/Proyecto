@@ -8,10 +8,10 @@ const getUsers = async () => {
     }
 }
 
-const postUsers = async (user: {name:string, age:number, email:string, cellphone:number, address:string, country:string, state:boolean}) => {
-    const { name, age, email, cellphone, address, country, state } = user
+const postUsers = async (user: {name:string, last_name:string, email:string, password:string, birthday:string, ticket_id:string}) => {
+    const { name, last_name, email, password, birthday, ticket_id } = user
     try {
-        const newUser = new User({name, age, email, cellphone, address, country, state})
+        const newUser = new User({name, last_name, email, password, birthday, ticket_id})
         return await newUser.save() 
     } catch (error) {
         throw error

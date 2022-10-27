@@ -11,8 +11,8 @@ const getAllTickets = async (req:any, res:any) => {
 }
 
 const postNewTicket = async (req:any, res:any) => {
-    const { price, category, match_date, stadio, user_id } = req.body
-    if(!price || !category || !match_date || !stadio || !user_id){
+    const { price, currency, match_day, stadium_name } = req.body
+    if(!price || !currency || !match_day || !stadium_name){
         res.status(400).send({
             status: "FAILED",
             data:{

@@ -11,12 +11,19 @@ const getAllUsers = async (req:any, res:any) => {
 }
 
 const postNewUser = async (req:any, res:any) => {
-    const { name, email, cellphone } = req.body
-    if(!name || !email || !cellphone){
+    const { name, last_name, email, password } = req.body
+    if(!name || !last_name || !email || !password){
         res.status(400).send({
             status: "FAILED",
             data:{
                 error: "Some atributes are missing or are empty"
+            }
+        })
+    }else if(password.length < 6){
+        res.status(400).send({
+            status: "FAILED",
+            data:{
+                error: "You have an insecure password, it should have at least 6 characters"
             }
         })
     }
