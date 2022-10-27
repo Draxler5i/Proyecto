@@ -1,3 +1,5 @@
+import client from '../database/conection'
+
 const getTickets = async () => {
     try {
         const res = await client.query(
@@ -9,12 +11,23 @@ const getTickets = async () => {
     };
 }
 
-
-const postTickets = async (tickets: { category: string, stadio: string, matchDate: Date, price: number }) => {
+const getOneTicket = async (id:number) => {
     try {
         const res = await client.query(
-            "INSERT INTO tickets (category) VALUES ($1)",
-            [tickets.category]
+            "SELECT * FROM tickets WHERE id_ticket=$1;",
+            [id]
+        )
+        return res.rows
+    } catch (error) {
+        throw error
+    }
+}
+
+const postTickets = async (ticket: { price: number, currency: string, matchDay: Date, created:Date, idStadium:number }) => {
+    try {
+        const res = await client.query(
+            "INSERT INTO tickets (price, currency, match_day, created, id_stadium) VALUES ($1, $2, $3, $4, $5)",
+            [ticket.price, ticket.currency, ticket.matchDay, ticket.created, ticket.idStadium]
         );
         return res;
     } catch (error) {
@@ -22,11 +35,11 @@ const postTickets = async (tickets: { category: string, stadio: string, matchDat
     };
 }
 
-const updateTickets = async (tickets: { category: string, stadio: string, matchDate: Date, id: number }) => {
+const updateTickets = async (ticket: { price: number, currency: string, matchDay: Date, id: number, idStadium:number}) => {
     try {
         const res = await client.query(
-            "UPDATE tickets SET category=$1,stadio=$2, match_date=$3  WHERE id_tickets=$4",
-            [tickets.stadio, tickets.stadio, tickets.matchDate, tickets.id]
+            "UPDATE tickets SET price=$1, currency=$2, match_day=$3, id_stadium=$4 WHERE id_ticket=$5",
+            [ticket.price, ticket.currency, ticket.matchDay, ticket.idStadium, ticket.id]
         );
         return res
     } catch (error) {
@@ -37,8 +50,8 @@ const updateTickets = async (tickets: { category: string, stadio: string, matchD
 const deleteTickets = async (id: number) => {
     try {
         const res = client.query(
-            "DELETE FROM tickets WHERE id= $1",
-            id
+            "DELETE FROM tickets WHERE id_ticket=$1",
+            [id]
         );
         return res
     } catch (error) {
@@ -46,8 +59,9 @@ const deleteTickets = async (id: number) => {
     };
 }
 
-module.exports = {
+export = {
     getTickets,
+    getOneTicket,
     postTickets,
     updateTickets,
     deleteTickets,

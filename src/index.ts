@@ -1,18 +1,18 @@
-const express = require('express')
-const userRouter = require('./routes')
+import dotenv from 'dotenv'
+import express from 'express'
+import userRouter from './routes/user.routes'
+import ticketRouter from './routes/ticket.routes'
 
-// Initializations
+dotenv.config()
 const app = express();
 const PORT = process.env.PORT_DEV;
 
-// middlewares
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
-// Routes
-app.use('/api', userRouter)
+app.use('/api/users', userRouter)
+app.use('/api/tickets', ticketRouter)
 
-// Starting the Server
 app.listen(PORT, () => {
     console.log(`Server on port`, PORT);
 });
