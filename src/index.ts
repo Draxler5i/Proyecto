@@ -2,9 +2,12 @@ import express from 'express'
 import 'dotenv/config'
 const services = require('./services/service')
 const session = require('express-session');
-
+const jwt = require('jsonwebtoken');
 const app = express()
 const PORT = process.env.SERVER_PORT || 4001
+jwt.sign({
+    data: 'foobar'
+}, 'secret', { expiresIn: '1h' });
 app.use(session({
     secret: 'secret',
     resave: true,
