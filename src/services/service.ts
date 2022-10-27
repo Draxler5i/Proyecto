@@ -1,5 +1,5 @@
 import { QueryResult } from 'pg'
-const client = require('../postgres/dbConnection')
+const client = require('../postgres/connection')
 client.connect()
 
 declare namespace Express {
@@ -15,11 +15,11 @@ declare namespace Express {
 //GET
 const getUsers = (_req: Express.Request, res: Express.Response) => {
     try {
-        client.query('SELECT * from users', (error: Error, result: QueryResult) => {
+        client.query('SELECT * from public.user', (error: Error, result: QueryResult) => {
             if (error) {
                 throw error
             }
-            res.status(200).json(result)
+            res.status(200).json(result['rows'])
         })
     } catch (e) {
         console.log(e)
@@ -34,7 +34,7 @@ const getTicket = (_req: Express.Request, res: Express.Response) => {
             if (error) {
                 throw error
             }
-            res.status(200).json(result)
+            res.status(200).json(result['rows'])
         })
     } catch (e) {
         console.log(e)
@@ -44,13 +44,13 @@ const getTicket = (_req: Express.Request, res: Express.Response) => {
 
 //POST
 const createUser = (request: Express.Request, response: Express.Response) => {
-    const { name, email, cellphone, age, address, created, country, state } = request.body
+    const { name, last_name, email, password, age, tickets_id } = request.body
     try {
-        client.query('INSERT INTO users (name, email, cellphone, age, address, created, country, state) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *', [name, email, cellphone, age, address, created, country, state], (error: Error, results: QueryResult) => {
+        client.query('INSERT INTO public.user (name, lastname, email, password, age, tickets_id) VALUES ($1, $2, $3, $4, $5) RETURNING *', [name, last_name, email, password, age, tickets_id], (error: Error, results: QueryResult) => {
             if (error) {
                 throw error
             }
-            response.status(201).send(`User added with ID ${results.rows[0].user_id}, name: ${results.rows[0].name}, email: ${results.rows[0].email}, cellphone: ${results.rows[0].cellphone} age: ${results.rows[0].age}, address: ${results.rows[0].address}, created: ${results.rows[0].created}, country: ${results.rows[0].country}, state: ${results.rows[0].state}`)
+            response.status(201).send(`User added with ID ${results.rows[0].user_id}, name: ${results.rows[0].name}, lastname: ${results.rows[0].lastname}, email: ${results.rows[0].email}, age: ${results.rows[0].age} ticket_id: ${results.rows[0].tickets_id}`)
         })
     } catch (e) {
         console.log(e)
@@ -59,13 +59,13 @@ const createUser = (request: Express.Request, response: Express.Response) => {
 }
 
 const createTicket = (request: Express.Request, response: Express.Response) => {
-    const { price, category, match_date, stadium, created } = request.body
+    const { price, currency, match_day, stadium_name } = request.body
     try {
-        client.query('INSERT INTO ticket ( price, category, match_date, stadium, created) VALUES ($1, $2, $3, $4, $5) RETURNING *', [ price, category, match_date, stadium, created], (error: Error, results: QueryResult) => {
+        client.query('INSERT INTO ticket ( price, currency, match_day, stadium_name) VALUES ($1, $2, $3, $4) RETURNING *', [price, currency, match_day, stadium_name], (error: Error, results: QueryResult) => {
             if (error) {
                 throw error
             }
-            response.status(201).send(`Ticket added with ID ${results.rows[0].ticket_id}, name: ${results.rows[0].price}, category: ${results.rows[0].category}, match_date: ${results.rows[0].match_date}, stadium: ${results.rows[0].stadium}, created: ${results.rows[0].created}`)
+            response.status(201).send(`Ticket added with ID ${results.rows[0].ticket_id}, price: ${results.rows[0].price}, currency: ${results.rows[0].currency}, match_day: ${results.rows[0].match_day}, stadium name: ${results.rows[0].stadium_name}`)
         })
     } catch (e) {
         console.log(e)
@@ -78,7 +78,7 @@ const updateUser = (request: Express.Request, response: Express.Response) => {
     const id = parseInt(request.params.id)
     const { name, email, cellphone, age, address, country, state } = request.body
     try {
-        client.query('UPDATE users SET name = $1, email = $2, cellphone = $3, age= $4, address = $5, country = $6, state = $7 WHERE user_id = $8', [name, email, cellphone, age, address, country, state, id], (error: Error, results: QueryResult) => {
+        client.query('UPDATE user SET name = $1, email = $2, cellphone = $3, age= $4, address = $5, country = $6, state = $7 WHERE user_id = $8', [name, email, cellphone, age, address, country, state, id], (error: Error, results: QueryResult) => {
             if (error) {
                 throw error
             }
@@ -94,7 +94,7 @@ const updateTicket = (request: Express.Request, response: Express.Response) => {
     const id = parseInt(request.params.id)
     const { price, category, match_date, stadium, created } = request.body
     try {
-         client.query('UPDATE ticket SET price = $1, category = $2, match_date = $3, stadium= $4, created = $5 WHERE ticket_id = $6', [price, category, match_date, stadium, created, id], (error: Error, results: QueryResult) => {
+        client.query('UPDATE ticket SET price = $1, category = $2, match_date = $3, stadium= $4, created = $5 WHERE ticket_id = $6', [price, category, match_date, stadium, created, id], (error: Error, results: QueryResult) => {
             if (error) {
                 throw error
             }
@@ -110,7 +110,7 @@ const updateTicket = (request: Express.Request, response: Express.Response) => {
 const deleteUser = (request: Express.Request, response: Express.Response) => {
     const id = parseInt(request.params.id)
     try {
-        client.query('DELETE FROM users WHERE user_id = $1', [id], (error: Error, results: QueryResult) => {
+        client.query('DELETE FROM user WHERE user_id = $1', [id], (error: Error, results: QueryResult) => {
             if (error) {
                 throw error
             }
@@ -137,4 +137,4 @@ const deleteTicket = (request: Express.Request, response: Express.Response) => {
     }
 }
 
-export {getUsers, getTicket, createUser, createTicket, updateUser, updateTicket, deleteUser, deleteTicket}
+export { getUsers, getTicket, createUser, createTicket, updateUser, updateTicket, deleteUser, deleteTicket }
