@@ -13,19 +13,12 @@ const register = async (req: any, res: any) => {
             }
         })
     }
-    if(!validateUser(req.body)){
-        res.status(400).send({
-            status: "FAILED",
-            data:{
-                error: "Some attributes aren't valids"
-            }
-        })   
-    }
+    req.body.birthday = new Date(birthday)
     const passwordEncrypted = await encryptor.encrypt(password)
     req.body.password = passwordEncrypted
     req.body.created = new Date(Date.now())
-    req.body.birthday = new Date(birthday)
     try {
+        await validateUser.validate(req.body)
         const data = await userService.postUsers(req.body)
         res.status(201).send({status: "OK", data:data.command, message:`User created`})
     } catch (error) {
@@ -44,14 +37,7 @@ const login = async (req:any, res:any) => {
                 }
             })
         }
-        if(!validateUser(req.body)){
-            res.status(400).send({
-                status: "FAILED",
-                data:{
-                    error: "Some attributes aren't valids"
-                }
-            })   
-        }
+        await validateUser.validate(req.body)
         const user = await userService.existUser(email)
         if(!user){
             res.status(400).send({

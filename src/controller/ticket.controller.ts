@@ -1,4 +1,5 @@
 import ticketService from '../services/ticket.service'
+import validateTicket from '../validations/ticket.validation'
 
 const getAllTickets = async (req: any, res: any) => {
     try {
@@ -39,8 +40,8 @@ const postNewTicket = async (req: any, res: any) => {
     }
     req.body.matchDay = new Date(matchDay)
     req.body.created = new Date(Date.now())
-    console.log(req.body)
     try {
+        await validateTicket.validate(req.body)
         const data = await ticketService.postTickets(req.body)
         res.status(201).send({status: "OK", data:data.command, message:`Ticket created`})
     } catch (error) {
