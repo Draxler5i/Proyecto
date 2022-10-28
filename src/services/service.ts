@@ -2,7 +2,6 @@ import { QueryResult } from 'pg'
 const jwt = require('jsonwebtoken')
 const client = require('../postgres/connection')
 const validate = require('./validationFunctions')
-
 client.connect()
 //GET
 const getUsers = (_req: Express.Request, res: Express.Response) => {
