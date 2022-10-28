@@ -1,23 +1,28 @@
-import loginService from '../services/login.service'
+const jwt = require('jsonwebtoken')
+const express = require('express')
+const app = express()
+const keys = require('../settings/keys')
+app.set('key', keys.key)
 
-const loginUser = async (req:any, res:any) => {
-    const { email, password } = req.body
-    if(!email || !password){
-        res.status(400).send({
-            status: "FAILED",
-            data:{
-                error: "Some atributes are missing or are empty"
-            }
+const checkPayload = (req:any, res:any)=>{
+    if(req.body.email == 'adam@email.com' && req.body.password == '12345'){
+        const payload = {
+            check: true
+        }
+        const token = jwt.sign(payload, app.get('key'),{
+            expiresIn: '7d'
         })
-    }
-    try {
-        await loginService.loginUser(req.body)
-        res.status(201).send({status: "OK", message:`Login accepted`})
-    } catch (error) {
-        res.send({ status:"FAILED", data: { error }})
+        res.json({
+            message: 'SUCCESFUL AUTHENTICATION',
+            token: token
+        })
+    }else{
+        res.json({
+            message: 'INCORRECT USER OR PASSWORD, PLEASE TRY AGAIN'
+        })
     }
 }
 
 export = {
-    loginUser
+    checkPayload
 }

@@ -3,6 +3,6 @@ import loginController from '../controllers/login.controller'
 const router = Router()
 
 router
-    .post('/', loginController.loginUser)
+    .post('/', loginController.checkPayload)
 
 export = router
