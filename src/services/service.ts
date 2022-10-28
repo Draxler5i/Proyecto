@@ -49,7 +49,7 @@ const createUser = (request: Express.Request, response: Express.Response) => {
                     throw (e)
                 }
             } else {
-                response.send('Pasword must be minimum of 6 characters and contain at least one number and at least one capital letter')
+                response.send('Password must be minimum of 6 characters and contain at least one number and at least one capital letter')
             }
         } else { response.send('Age not valid, must be =>18') }
     } else {
