@@ -1,5 +1,6 @@
 const pool = require('../database/connection')
-const getUser = async (req: any, res: any) => {
+
+const getUsers = async (req: any, res: any) => {
     try {
         await pool.query('SELECT * FROM user', (error: any, results: any, fields: any) => {
             if (error) throw error
@@ -50,7 +51,7 @@ const deleteUser = async (req: any, res: any) => {
     }
 }
 module.exports = {
-    getUser,
+    getUsers,
     putUser,
     postUser,
     deleteUser

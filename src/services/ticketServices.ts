@@ -1,4 +1,5 @@
 const ticket = require('../database/connection')
+
 const getTicket = async (req: any, res: any) => {
     try {
         await ticket.query('SELECT * FROM ticket', (error: any, results: any, fields: any) => {
