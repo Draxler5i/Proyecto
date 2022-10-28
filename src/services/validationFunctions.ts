@@ -7,7 +7,18 @@ const validateEmail = (email: string) => {
     }
 }
 const validatePass = (password: string) => {
-    if (password.length >= 6 && /[0-9]/.test(password)) return true
+    if (password.length >= 6 && /[0-9]/.test(password) && hasUppercase(password)) return true
     return false
 }
+function hasUppercase(password: string) {
+    let res = false
+    password.split('').forEach((e) => {
+        if (e == e.toUpperCase()) {
+            res = true
+        }
+    })
+    return res
+};
 module.exports = { validateEmail, validatePass }
+
+console.log(hasUppercase('njnsnk').toString)
