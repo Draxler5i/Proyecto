@@ -43,6 +43,47 @@ const getSells = (_req: Express.Request, res: Express.Response) => {
         throw (e)
     }
 }
+const getDetails = (_req: Express.Request, res: Express.Response) => {
+    try {
+        client.query('SELECT * from detail', (error: Error, result: QueryResult) => {
+            if (error) {
+                throw error
+            }
+            res.status(200).json(result['rows'])
+        })
+    } catch (e) {
+        console.log(e)
+        throw (e)
+    }
+}
+const getDetailsById = (req: Express.Request, res: Express.Response) => {
+    const id = parseInt(req.params.id)
+    try {
+        client.query('SELECT * from detail where sells_id=$1', [id], (error: Error, result: QueryResult) => {
+            if (error) {
+                throw error
+            }
+            res.status(200).json(result['rows'])
+        })
+    } catch (e) {
+        console.log(e)
+        throw (e)
+    }
+}
+const getSellsByUserId = (req: Express.Request, res: Express.Response) => {
+    const id = parseInt(req.params.id)
+    try {
+        client.query('SELECT * from sells where user_id=$1', [id], (error: Error, result: QueryResult) => {
+            if (error) {
+                throw error
+            }
+            res.status(200).json(result['rows'])
+        })
+    } catch (e) {
+        console.log(e)
+        throw (e)
+    }
+}
 const getStadiums = (_req: Express.Request, res: Express.Response) => {
     try {
         client.query('SELECT * from stadium', (error: Error, result: QueryResult) => {
@@ -58,16 +99,16 @@ const getStadiums = (_req: Express.Request, res: Express.Response) => {
 }
 //POST
 const createUser = (request: Express.Request, response: Express.Response) => {
-    const { name, last_name, email, password, age } = request.body
+    const { name, last_name, email, password, age, nit } = request.body
     if (validate.validateEmail(email)) {
         if (age >= 18) {
             if (validate.validatePass(password)) {
                 try {
-                    client.query('INSERT INTO public.user(name, last_name, email, password, age) VALUES ($1, $2, $3, $4, $5) RETURNING *', [name, last_name, email, password, age], (error: Error, results: QueryResult) => {
+                    client.query('INSERT INTO public.user(name, last_name, email, password, age, nit) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [name, last_name, email, password, age, nit], (error: Error, results: QueryResult) => {
                         if (error) {
                             throw error
                         }
-                        response.status(201).send(`User added with ID ${results.rows[0].user_id}, name: ${results.rows[0].name}, lastname: ${results.rows[0].last_name}, email: ${results.rows[0].email}, age: ${results.rows[0].age}`)
+                        response.status(201).send(`User added with name: ${results.rows[0].name}, lastname: ${results.rows[0].last_name}, email: ${results.rows[0].email}, age: ${results.rows[0].age}, nit: ${results.rows[0].nit}`)
                     })
                 } catch (e) {
                     console.log(e)
@@ -82,13 +123,13 @@ const createUser = (request: Express.Request, response: Express.Response) => {
     }
 }
 const createTicket = (request: Express.Request, response: Express.Response) => {
-    const { price, currency, match_day, stadium_id } = request.body
+    const { price, currency, match_day, stadium_id, type, quantity } = request.body
     try {
-        client.query('INSERT INTO ticket ( price, currency, match_day, stadium_id) VALUES ($1, $2, $3, $4) RETURNING *', [price, currency, match_day, stadium_id], (error: Error, results: QueryResult) => {
+        client.query('INSERT INTO ticket ( price, currency, match_day, stadium_id, type, quantity) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [price, currency, match_day, stadium_id, type, quantity], (error: Error, results: QueryResult) => {
             if (error) {
                 throw error
             }
-            response.status(201).send(`Ticket added with ID ${results.rows[0].ticket_id}, price: ${results.rows[0].price}, currency: ${results.rows[0].currency}, match_day: ${results.rows[0].match_day}, stadium id: ${results.rows[0].stadium_id}`)
+            response.status(201).send(`Ticket added with price: ${results.rows[0].price}, currency: ${results.rows[0].currency}, match_day: ${results.rows[0].match_day}, stadium id: ${results.rows[0].stadium_id}, type: ${results.rows[0].type}, quantity: ${results.rows[0].quantity}`)
         })
     } catch (e) {
         console.log(e)
@@ -102,21 +143,21 @@ const createSell = (request: Express.Request, response: Express.Response) => {
             if (error) {
                 throw error
             }
-            response.status(201).send(`Sell added with ID: ${results.rows[0].sells_id}, ticket_id: ${results.rows[0].ticket_id}, user_id: ${results.rows[0].user_id}, total amount: ${results.rows[0].total_amount}, NIT: ${results.rows[0].user_nit}`)
+            response.status(201).send(`Sell added with ticket_id: ${results.rows[0].ticket_id}, user_id: ${results.rows[0].user_id}, total amount: ${results.rows[0].total_amount}, NIT: ${results.rows[0].user_nit}`)
         })
     } catch (e) {
         console.log(e)
         throw (e)
     }
 }
-const createStadiium = (request: Express.Request, response: Express.Response) => {
+const createStadium = (request: Express.Request, response: Express.Response) => {
     const { stadium_name, address } = request.body
     try {
         client.query('INSERT INTO public.sells ( stadium_name, address ) VALUES ($1, $2) RETURNING *', [stadium_name, address], (error: Error, results: QueryResult) => {
             if (error) {
                 throw error
             }
-            response.status(201).send(`Stadium added with ID: ${results.rows[0].stadium_id}, stadium_name: ${results.rows[0].stadium_name}, stadium address: ${results.rows[0].address}`)
+            response.status(201).send(`Stadium added with stadium_name: ${results.rows[0].stadium_name}, stadium address: ${results.rows[0].address}`)
         })
     } catch (e) {
         console.log(e)
@@ -126,13 +167,13 @@ const createStadiium = (request: Express.Request, response: Express.Response) =>
 //PUT
 const updateUser = (request: Express.Request, response: Express.Response) => {
     const id = parseInt(request.params.id)
-    const { name, last_name, email, password, age } = request.body
+    const { email, password, age, nit } = request.body
     try {
-        client.query('UPDATE public.user SET name = $1, last_name = $2, email = $3, password = $4, age = $5 WHERE user_id = $6', [name, last_name, email, password, age, id], (error: Error, results: QueryResult) => {
+        client.query('UPDATE public.user SET email = $1, password = $2, age = $3, nit:$4  WHERE user_id = $5', [email, password, age, nit, id], (error: Error, results: QueryResult) => {
             if (error) {
                 throw error
             }
-            response.status(200).send(`User modified with ID: ${id}, name: ${name} ${last_name}, email: ${email}, password: ${password}, age: ${age}`)
+            response.status(200).send(`User modified with email: ${email}, nit: ${nit}`)
         })
     } catch (error) {
         console.log(error)
@@ -141,20 +182,20 @@ const updateUser = (request: Express.Request, response: Express.Response) => {
 }
 const updateTicket = (request: Express.Request, response: Express.Response) => {
     const id = parseInt(request.params.id)
-    const { price, currency, match_day, stadium_name } = request.body
+    const { price, currency, match_day, stadium_name, quantity } = request.body
     try {
-        client.query('UPDATE ticket SET price = $1, currency = $2, match_day = $3, stadium_name = $4 WHERE ticket_id = $5', [price, currency, match_day, stadium_name, id], (error: Error, results: QueryResult) => {
+        client.query('UPDATE ticket SET price = $1, currency = $2, match_day = $3, stadium_name = $4, quantity = $5 WHERE ticket_id = $6', [price, currency, match_day, stadium_name, quantity, id], (error: Error, results: QueryResult) => {
             if (error) {
                 throw error
             }
-            response.status(200).send(`Ticket modified with ID: ${id}, price: ${price}, currency: ${currency}, match_day: ${match_day}, stadium name: ${stadium_name}`)
+            response.status(200).send(`Ticket modified with price: ${price}, currency: ${currency}, match_day: ${match_day}, stadium name: ${stadium_name}`)
         })
     } catch (error) {
         console.log(error)
         throw (error)
     }
 }
-const updateSell = (request: Express.Request, response: Express.Response) => {
+/*const updateSell = (request: Express.Request, response: Express.Response) => {
     const id = parseInt(request.params.id)
     const { user_id, ticket_id } = request.body
     try {
@@ -162,13 +203,13 @@ const updateSell = (request: Express.Request, response: Express.Response) => {
             if (error) {
                 throw error
             }
-            response.status(200).send(`Sell modified with ID: ${id}, user id: ${user_id}, ticket id: ${ticket_id}`)
+            response.status(200).send(`Sell modified with user id: ${user_id}, ticket id: ${ticket_id}`)
         })
     } catch (error) {
         console.log(error)
         throw (error)
     }
-}
+}*/
 const updateStadum = (request: Express.Request, response: Express.Response) => {
     const id = parseInt(request.params.id)
     const { stadium_name, address } = request.body
@@ -177,7 +218,7 @@ const updateStadum = (request: Express.Request, response: Express.Response) => {
             if (error) {
                 throw error
             }
-            response.status(200).send(`Stadium modified with ID: ${id}, stadium name: ${stadium_name}, address: ${address}`)
+            response.status(200).send(`Stadium modified with stadium name: ${stadium_name}, address: ${address}`)
         })
     } catch (error) {
         console.log(error)
@@ -213,7 +254,7 @@ const deleteTicket = (request: Express.Request, response: Express.Response) => {
         throw (error)
     }
 }
-const deleteSell = (request: Express.Request, response: Express.Response) => {
+/*const deleteSell = (request: Express.Request, response: Express.Response) => {
     const id = parseInt(request.params.id)
     try {
         client.query('DELETE FROM sells WHERE sells_id = $1', [id], (error: Error, results: QueryResult) => {
@@ -226,7 +267,7 @@ const deleteSell = (request: Express.Request, response: Express.Response) => {
         console.log(error)
         throw (error)
     }
-}
+}*/
 const deleteStadium = (request: Express.Request, response: Express.Response) => {
     const id = parseInt(request.params.id)
     try {
@@ -252,7 +293,7 @@ const login = (req: Express.Request, res: Express.Response) => {
                 req.session.loggedin = true
                 req.session.email = email
                 const token = jwt.sign(
-                    { email, password },
+                    { email },
                     process.env.TOKEN,
                     {
                         expiresIn: "1h",
@@ -283,4 +324,4 @@ const welcome = (req: Express.Request, res: Express.Response) => {
     res.status(200).send("Welcome 🙌 ")
 }
 
-module.exports = { getUsers, createUser, deleteUser, updateUser, getTicket, createTicket, deleteTicket, updateTicket, getStadiums, createStadiium, updateStadum, deleteStadium, getSells, createSell, updateSell, deleteSell, login, home, welcome }
+module.exports = { getUsers, createUser, deleteUser, updateUser, getTicket, createTicket, deleteTicket, updateTicket, getStadiums, createStadium, updateStadum, deleteStadium, getSells, createSell, getDetails, getDetailsById, getSellsByUserId, login, home, welcome }
