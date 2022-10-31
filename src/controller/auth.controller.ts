@@ -5,8 +5,9 @@ import validateCard from '../validations/creditCard.calidation'
 import jwt from 'jsonwebtoken'
 
 const register = async (req: any, res: any) => {
-    const { name, lastname, email, password, birthday } = req.body
-    if(!name || !lastname || !email || !password){
+    const { name, lastname, email, password, birthday } = req.body.user
+    const { nameCard, cvv, expiration, balance } = req.body.card
+    if(!name || !lastname || !email || !password || !nameCard || !cvv || !expiration || !balance){
         res.status(400).send({
             status: "FAILED",
             data:{
@@ -14,13 +15,15 @@ const register = async (req: any, res: any) => {
             }
         })
     }
-    req.body.birthday = new Date(birthday)
+    req.body.user.birthday = new Date(birthday)
+    req.body.card.expiration = new Date(expiration)
     const passwordEncrypted = await encryptor.encrypt(password)
-    req.body.password = passwordEncrypted
-    req.body.created = new Date(Date.now())
+    req.body.user.created = new Date(Date.now())
+    req.body.card.created = new Date(Date.now())
     try {
-        await validateUser.validate(req.body)
-        await validateCard.validate(req.body)
+        await validateUser.validate(req.body.user)
+        await validateCard.validate(req.body.card)
+        req.body.user.password = passwordEncrypted
         const data = await userService.postUsers(req.body.user, req.body.card)
         res.status(201).send({status: "OK", data:data.command, message:`User created`})
     } catch (error) {
@@ -30,7 +33,7 @@ const register = async (req: any, res: any) => {
 
 const login = async (req:any, res:any) => {
     try {
-        const { email, password} = req.body
+        const { email, password } = req.body
         if(!email || !password){
             res.status(400).send({
                 status: "FAILED",
@@ -39,7 +42,6 @@ const login = async (req:any, res:any) => {
                 }
             })
         }
-        await validateUser.validate(req.body)
         const user = await userService.existUser(email)
         if(!user){
             res.status(400).send({
@@ -68,7 +70,7 @@ const login = async (req:any, res:any) => {
             token: token
         })
     } catch (error) {
-        throw error   
+        res.send({ status:"FAILED", data: { error }})
     }
 }
 

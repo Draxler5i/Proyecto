@@ -23,13 +23,12 @@ const getOneTicket = async (id:number) => {
     }
 }
 
-const postTickets = async (ticket: { price: number, currency: string, matchDay: Date, created:Date, state:boolean }) => {
+const postTickets = async (ticket: { price: number, currency: string, matchDay: Date, created:Date, state:boolean, idStadium:number }) => {
     try {
         const res = await client.query(
-            "INSERT INTO tickets (price, currency, match_day, created, state) VALUES ($1, $2, $3, $4, $5)",
-            [ticket.price, ticket.currency, ticket.matchDay, ticket.created, false]
+            "INSERT INTO tickets (price, currency, match_day, created, state, id_stadium) VALUES ($1, $2, $3, $4, $5, $6)",
+            [ticket.price, ticket.currency, ticket.matchDay, ticket.created, false, ticket.idStadium]
         )
-        console.log(res)
         return res;
     } catch (error) {
         console.log(error)
@@ -52,7 +51,7 @@ const updateTickets = async (ticket: {price: number, currency: string, matchDay:
 const updateState = async (state:boolean, idTicket:number) => {
     try {
         const res = await client.query(
-            "UPDATE tickets SET state=$1 WHERE id_user=$2 WHERE id_ticket=$3;",
+            "UPDATE tickets SET state=$1 WHERE id_ticket=$2;",
             [state, idTicket]
         )
         return res
