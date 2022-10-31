@@ -1,4 +1,4 @@
-import { object, string, number, boolean, date } from "yup"
+import { object, string, number, date } from "yup"
 
 const schemaTicket = object({
     price: number()

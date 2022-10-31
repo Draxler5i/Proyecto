@@ -23,13 +23,16 @@ const getOneUser = async (id:number) => {
     }
 }
 
-const postUsers = async (user: {name:string, age:number, email:string, password:string, birthday:Date, created:Date, lastname:string}) => {
+const postUsers = async (user: {name:string, age:number, email:string, password:string, birthday:Date, created:Date, lastname:string},
+                         card:{nameCard:string, expiration:Date, created:Date, balance:number, cvv:number}) => {
     try {
         const res = await client.query(
-            "INSERT INTO users (name_user, age, email, password, birthday, created, lastname) VALUES ($1, $2, $3, $4, $5, $6, $7);",
+            "INSERT INTO users (name_user, age, email, password, birthday, created, lastname) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id_user;",
             [user.name, user.age, user.email, user.password, user.birthday, user.created, user.lastname]
         )
-        return res 
+        console.log(res)
+        const res2 = await addCreditCard(card, 1)
+        return res2
     } catch (error) {
         throw error
     }
@@ -69,6 +72,18 @@ const existUser = async (email:string) => {
     } catch (error) {
         throw error
     }   
+}
+
+const addCreditCard = async (card:{nameCard:string, expiration:Date, created:Date, balance:number, cvv:number}, id:number) => {
+    try {
+        const res = await client.query(
+            "INSERT INTO creditcard (name_card, expiration, created, balance, cvv, id_user) VALUES ($1,$2,$3,$4,$5,$6)",
+            [card.nameCard, card.expiration, card.created, card.balance, card.cvv, id]
+        )
+        return res
+    } catch (error) {
+        throw error   
+    }
 }
 
 export = {

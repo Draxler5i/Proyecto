@@ -1,6 +1,7 @@
 import userService from '../services/user.service'
 import encryptor from '../security/encryp'
 import validateUser from '../validations/user.validation'
+import validateCard from '../validations/creditCard.calidation'
 import jwt from 'jsonwebtoken'
 
 const register = async (req: any, res: any) => {
@@ -19,7 +20,8 @@ const register = async (req: any, res: any) => {
     req.body.created = new Date(Date.now())
     try {
         await validateUser.validate(req.body)
-        const data = await userService.postUsers(req.body)
+        await validateCard.validate(req.body)
+        const data = await userService.postUsers(req.body.user, req.body.card)
         res.status(201).send({status: "OK", data:data.command, message:`User created`})
     } catch (error) {
         res.send({ status:"FAILED", data: { error }})
@@ -60,10 +62,10 @@ const login = async (req:any, res:any) => {
             id: user[0].id_user, 
             email: user[0].email
         }, process.env.TOKEN_SECRET as string)
-        console.log(token)
         res.json({
             error: null,
-            data: 'Welcome'
+            data: 'Welcome',
+            token: token
         })
     } catch (error) {
         throw error   

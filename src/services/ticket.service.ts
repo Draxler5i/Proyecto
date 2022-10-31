@@ -37,16 +37,28 @@ const postTickets = async (ticket: { price: number, currency: string, matchDay: 
     };
 }
 
-const updateTickets = async (ticket: { price: number, currency: string, matchDay: Date, id: number, idStadium:number, state:boolean}) => {
+const updateTickets = async (ticket: {price: number, currency: string, matchDay: Date, id: number, idStadium:number, state:boolean}) => {
     try {
         const res = await client.query(
             "UPDATE tickets SET price=$1, currency=$2, match_day=$3, id_stadium=$4, state=$5 WHERE id_ticket=$6",
-            [ticket.price, ticket.currency, ticket.matchDay, ticket.idStadium, ticket.state,ticket.id]
+            [ticket.price, ticket.currency, ticket.matchDay, ticket.idStadium, ticket.state, ticket.id]
         );
         return res
     } catch (error) {
         throw error
     };
+}
+
+const updateState = async (state:boolean, idTicket:number) => {
+    try {
+        const res = await client.query(
+            "UPDATE tickets SET state=$1 WHERE id_user=$2 WHERE id_ticket=$3;",
+            [state, idTicket]
+        )
+        return res
+    } catch (error) {
+        
+    }
 }
 
 const deleteTickets = async (id: number) => {
@@ -67,5 +79,6 @@ export = {
     postTickets,
     updateTickets,
     deleteTickets,
+    updateState,
 }
 
