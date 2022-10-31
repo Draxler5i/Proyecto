@@ -275,7 +275,12 @@ const deleteUser = (request: Express.Request, response: Express.Response) => {
             if (error) {
                 throw error
             }
-            response.status(200).send(`User deleted with ID: ${id}`)
+            client.query('DELETE FROM public.creditCard WHERE user_id = $1', [id], (error: Error, results: QueryResult) => {
+                if (error) {
+                    throw error
+                }
+                response.status(200).send(`User and user's cards deleted with ID: ${id}`)
+            })
         })
     } catch (error) {
         console.log(error)
