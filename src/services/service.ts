@@ -99,7 +99,7 @@ const getStadiums = (_req: Express.Request, res: Express.Response) => {
 }
 //POST
 const createUser = (request: Express.Request, response: Express.Response) => {
-    const { name, last_name, email, password, age, nit } = request.body
+    const { name, last_name, email, password, age, nit, card_number, card_name, expiration, cvv, saldo } = request.body
     if (validate.validateEmail(email)) {
         if (age >= 18) {
             if (validate.validatePass(password)) {
@@ -108,8 +108,15 @@ const createUser = (request: Express.Request, response: Express.Response) => {
                         if (error) {
                             throw error
                         }
-                        response.status(201).send(`User added with name: ${results.rows[0].name}, lastname: ${results.rows[0].last_name}, email: ${results.rows[0].email}, age: ${results.rows[0].age}, nit: ${results.rows[0].nit}`)
+                        //response.status(201).send(`User added with name: ${results.rows[0].name}, lastname: ${results.rows[0].last_name}, email: ${results.rows[0].email}, age: ${results.rows[0].age}, nit: ${results.rows[0].nit}`)
+                        client.query('INSERT INTO creditCard(card_number, card_name, expiration, cvv, user_id, saldo) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [card_number, card_name, expiration, cvv, results.rows[0].user_id, saldo], (error: Error, res: QueryResult) => {
+                            if (error) {
+                                throw error
+                            }
+                            response.status(201).send(`Card user added with user name: ${results.rows[0].name}, lastname: ${results.rows[0].last_name}, email: ${results.rows[0].email}, age: ${results.rows[0].age}, nit: ${results.rows[0].nit}, card name: ${res.rows[0].card_name}, expiration: ${res.rows[0].expiration}}`)
+                        })
                     })
+
                 } catch (e) {
                     console.log(e)
                     throw (e)
@@ -136,14 +143,49 @@ const createTicket = (request: Express.Request, response: Express.Response) => {
         throw (e)
     }
 }
-const createSell = (request: Express.Request, response: Express.Response) => {
-    const { user_id, ticket_id, total_amount, user_nit } = request.body
+const getSaldo = (request: Express.Request, response: Express.Response) => {
+    const { user_id } = request.body
     try {
-        client.query('INSERT INTO public.sells ( user_id, ticket_id, total_amount, user_nit ) VALUES ($1, $2, $3, $4) RETURNING *', [user_id, ticket_id, total_amount, user_nit], (error: Error, results: QueryResult) => {
+        client.query('select sum(ca.saldo) as saldo from creditCard as ca where ca.user_id=$1', [user_id], (error: Error, results: QueryResult) => {
             if (error) {
+                console.log(error)
                 throw error
             }
-            response.status(201).send(`Sell added with ticket_id: ${results.rows[0].ticket_id}, user_id: ${results.rows[0].user_id}, total amount: ${results.rows[0].total_amount}, NIT: ${results.rows[0].user_nit}`)
+            if (parseFloat(results.rows[0].saldo) > 0) {
+                response.send(`Ud tiene ${results.rows[0].saldo} Bs.`)
+            } else {
+                response.send(`NO existe suficiente saldo para realizar la compra. Ud tiene ${results.rows[0].saldo} Bs.`)
+            }
+        })
+    } catch (e) {
+        console.log(e)
+        throw (e)
+    }
+}
+const createSell = (request: Express.Request, response: Express.Response) => {
+    const { user_id, sell_date } = request.body
+    try {
+        client.query('INSERT INTO public.sells ( user_id, sell_date ) VALUES ($1, $2) RETURNING *', [user_id, sell_date], (error: Error, results: QueryResult) => {
+            if (error) {
+                console.log(error)
+                throw error
+            }
+            response.status(201).send(`Sell added with sell date: ${results.rows[0].sell_date}}`)
+        })
+    } catch (e) {
+        console.log(e)
+        throw (e)
+    }
+}
+const createDetail = (request: Express.Request, response: Express.Response) => {
+    const { sells_id, ticket_id, quantity } = request.body
+    try {
+        client.query('INSERT INTO public.detail ( sells_id, ticket_id, quantity ) VALUES ($1, $2, $3) RETURNING *', [sells_id, ticket_id, quantity], (error: Error, results: QueryResult) => {
+            if (error) {
+                console.log(error)
+                throw error
+            }
+            response.status(201).send(`Detail added with ticket id: ${results.rows[0].ticket_id} and quantity: ${results.rows[0].quantity}}`)
         })
     } catch (e) {
         console.log(e)
@@ -254,20 +296,26 @@ const deleteTicket = (request: Express.Request, response: Express.Response) => {
         throw (error)
     }
 }
-/*const deleteSell = (request: Express.Request, response: Express.Response) => {
+const deleteSell = (request: Express.Request, response: Express.Response) => {
     const id = parseInt(request.params.id)
     try {
-        client.query('DELETE FROM sells WHERE sells_id = $1', [id], (error: Error, results: QueryResult) => {
+        client.query('DELETE FROM detail WHERE sells_id=$1', [id], (error: Error, results: QueryResult) => {
             if (error) {
                 throw error
             }
-            response.status(200).send(`Sell deleted with ID: ${id}`)
+            client.query('DELETE FROM sells WHERE sells_id = $1', [id], (error: Error, res: QueryResult) => {
+                if (error) {
+                    throw error
+                }
+                response.status(200).send(`Sell deleted with ID: ${id}`)
+            })
         })
+
     } catch (error) {
         console.log(error)
         throw (error)
     }
-}*/
+}
 const deleteStadium = (request: Express.Request, response: Express.Response) => {
     const id = parseInt(request.params.id)
     try {
@@ -324,4 +372,10 @@ const welcome = (req: Express.Request, res: Express.Response) => {
     res.status(200).send("Welcome 🙌 ")
 }
 
-module.exports = { getUsers, createUser, deleteUser, updateUser, getTicket, createTicket, deleteTicket, updateTicket, getStadiums, createStadium, updateStadum, deleteStadium, getSells, createSell, getDetails, getDetailsById, getSellsByUserId, login, home, welcome }
+module.exports = {
+    getUsers, getTicket, getStadiums, getSells, getDetails, getDetailsById, getSellsByUserId, getSaldo,
+    createUser, createTicket, createStadium, createSell, createDetail,
+    updateUser, updateTicket, updateStadum,
+    deleteUser, deleteTicket, deleteStadium, deleteSell,
+    login, home, welcome
+}
