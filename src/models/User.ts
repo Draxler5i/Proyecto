@@ -22,8 +22,28 @@ const UserSchema = new Schema({
         required: false
     },
     ticket_id: {
+        type: [{ type: Schema.Types.ObjectId, ref: 'Ticket' }],
+        required: true
+    },
+    creditCardNumber:{
         type: String,
-        required: false
+        required: true
+    },
+    creditCardOwner:{
+        type: String,
+        required: true
+    },
+    expirationDate:{
+        type: Date,
+        required: true
+    },
+    cvv:{
+        type: String,
+        required: true
+    },
+    balance:{
+        type: Number,
+        required: true
     }
 }, {
     timestamps:true

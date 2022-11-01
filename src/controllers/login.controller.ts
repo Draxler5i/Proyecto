@@ -1,23 +1,28 @@
+import dotenv from 'dotenv'
 const jwt = require('jsonwebtoken')
-const express = require('express')
-const app = express()
-const keys = require('../settings/keys')
-app.set('key', keys.key)
+import User from '../models/User';
 
-const checkPayload = (req:any, res:any)=>{
-    if(req.body.email == 'adam@email.com' && req.body.password == '12345'){
+dotenv.config()
+
+const {JWT_KEY} = process.env
+
+const checkPayload = async(req:any, res:any)=>{
+    const entryEmail: String  = req.body.email
+    const entryPassword: String = req.body.password
+    const user:any = await User.findOne({ email: entryEmail })
+    if(entryEmail == user.email && entryPassword == user.password){
         const payload = {
             check: true
         }
-        const token = jwt.sign(payload, app.get('key'),{
+        const token = jwt.sign(payload, JWT_KEY,{
             expiresIn: '7d'
         })
-        res.json({
+        res.status(200).json({
             message: 'SUCCESFUL AUTHENTICATION',
             token: token
         })
     }else{
-        res.json({
+        res.status(400).json({
             message: 'INCORRECT USER OR PASSWORD, PLEASE TRY AGAIN'
         })
     }

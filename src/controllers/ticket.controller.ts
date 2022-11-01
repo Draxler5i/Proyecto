@@ -1,3 +1,5 @@
+import User from '../models/User';
+import Ticket from '../models/Ticket'
 import ticketService from '../services/ticket.service'
 
 const getAllTickets = async (req:any, res:any) => {
@@ -11,7 +13,7 @@ const getAllTickets = async (req:any, res:any) => {
 }
 
 const postNewTicket = async (req:any, res:any) => {
-    const { price, currency, match_day, stadium_name } = req.body
+    const { price, currency, match_day, stadium_id, stadium_name, seat, user_id } = req.body
     if(!price || !currency || !match_day || !stadium_name){
         res.status(400).send({
             status: "FAILED",
@@ -20,8 +22,20 @@ const postNewTicket = async (req:any, res:any) => {
             }
         })
     }
+    const user:any = await User.findById(user_id)
+    const newTicket = new Ticket({
+        price,
+        currency,
+        match_day,
+        stadium_id,
+        stadium_name,
+        seat,
+        user_id: user.id
+    })
     try {
-        const data = await ticketService.postTicket(req.body)
+        const datatoSave = await newTicket.save()
+        user.ticket_id = user.ticket_id.concat(datatoSave._id)
+        await user?.save()
         res.status(201).send({status: "OK", message:`Ticket created`})
     } catch (error) {
         res.send({ status:"FAILED", data: { error }})

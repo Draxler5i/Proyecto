@@ -1,16 +1,15 @@
 import { Router } from 'express'
 import express from 'express'
-
 const jwt = require('jsonwebtoken')
-const keys = require('../settings/keys')
 const router = Router()
-const app = express()
+import dotenv from 'dotenv'
+dotenv.config()
 
-app.set('key', keys.key)
+const {JWT_KEY} = process.env
 
 const verification = express.Router()
 verification.use((req:any, res:any, next:any) => {
-    let token = req.headers['x-access-token'] || req.headers['authorization']
+    let token = req.headers['authorization']
     console.log(token)
     if(!token){
         res.status(401).send({
@@ -23,7 +22,7 @@ verification.use((req:any, res:any, next:any) => {
         console.log(token)
     }
     if(token){
-        jwt.verify(token, app.get('key'), (error:Error, decoded:any)=>{
+        jwt.verify(token, JWT_KEY, (error:Error, decoded:any)=>{
             if(error){
                 return res.json({
                     message: 'Token not valid'
