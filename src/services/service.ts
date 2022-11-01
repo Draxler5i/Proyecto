@@ -185,7 +185,13 @@ const createDetail = (request: Express.Request, response: Express.Response) => {
                 console.log(error)
                 throw error
             }
-            response.status(201).send(`Detail added with ticket id: ${results.rows[0].ticket_id} and quantity: ${results.rows[0].quantity}}`)
+            client.query('update ticket set quantity = ((select ti.quantity from ticket as ti where ticket_id=$1) - $2) where ticket_id=$1 RETURNING *', [ticket_id, quantity], (error: Error, res: QueryResult) => {
+                if (error) {
+                    console.log(error)
+                    throw error
+                }
+                response.status(201).send(`Detail added with ticket id: ${results.rows[0].ticket_id} and quantity: ${results.rows[0].quantity}}`)
+            })
         })
     } catch (e) {
         console.log(e)
