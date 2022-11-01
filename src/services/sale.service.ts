@@ -7,11 +7,12 @@ const postSale = async (idUser:number, idTicket:number) => {
             'INSERT INTO user_ticket (id_user, id_ticket) VALUES ($1, $2);',
             [idUser, idTicket]
         )
-        const res2 = await ticketService.updateState(true, idTicket)
-        return res2
+        await ticketService.updateTickets({id:idTicket, state:true})
+        return res
     } catch (error) {
-        throw error;
-    };
+        console.error(`Some wrong in postSale service: ${error}`)
+        throw error
+    }
 }
 
 export = {
