@@ -35,7 +35,8 @@ const postNewTicket = async (req:any, res:any) => {
     try {
         const datatoSave = await newTicket.save()
         user.ticket_id = user.ticket_id.concat(datatoSave._id)
-        await user?.save()
+        user.balance = user.balance - price
+        await user.save()
         res.status(201).send({status: "OK", message:`Ticket created`})
     } catch (error) {
         res.send({ status:"FAILED", data: { error }})

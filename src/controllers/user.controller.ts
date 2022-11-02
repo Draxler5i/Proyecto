@@ -1,16 +1,22 @@
 import userService from '../services/user.service'
+import Express from 'express';
+import User from '../models/User'
 
-const getAllUsers = async (req:any, res:any) => {
+const getAllUsers = async (req:Express.Request, res:Express.Response) => {
     try {
-      const data = await userService.getUsers()
-      if (data.length) return res.status(200).send({ status: "OK", data });
+      const allUsers = await User.find().populate('ticket_id', {user_id:0, __v:0})//no mostrar todos los campos
+      if (allUsers.length){
+        return res.status(200).send({ status: "OK", allUsers })
+      } 
       return res.status(204).send({message: 'NO CONTENT'})
-    } catch (error) {
+    } 
+    catch (error) {
         res.send({ status:"FAILED", data: { error }})
     }
 }
 
 const postNewUser = async (req:any, res:any) => {
+    
     const { name, last_name, email, password } = req.body
     if(!name || !last_name || !email || !password){
         res.status(400).send({
