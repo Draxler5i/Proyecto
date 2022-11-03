@@ -1,6 +1,7 @@
 import Express from 'express'
 import User from '../models/User'
 import Ticket from '../models/Ticket'
+import Stadium from '../models/Stadium'
 
 const getAllTickets = async (req:Express.Request, res:Express.Response) => {
     try {
@@ -27,12 +28,23 @@ const postNewTicket = async (req:Express.Request, res:Express.Response) => {
     }
     try {
         const user:any = await User.findById(user_id)
+        const stadium:any = await Stadium.findById(stadium_id)
+        if(stadium.ticketsAvailable == 0){
+            return res.status(400).send({
+                status: 'FAILED',
+                data:{
+                    error: "We are sorry there are no more tickets available at the moment"
+                }
+            })
+        }
         const newTicket = new Ticket({price, currency, match_day, stadium_id, stadium_name, seat, user_id: user.id
         })
         const datatoSave = await newTicket.save()
         user.ticket_id = user.ticket_id.concat(datatoSave._id)
         user.balance = user.balance - price
+        stadium.ticketsAvailable = stadium.ticketsAvailable - 1
         await user.save()
+        await stadium.save()
         return res.status(201).send({status: "OK", message:`Ticket created`})
     }
     catch (error) {
@@ -71,15 +83,18 @@ const deleteTicket = async (req:Express.Request, res:Express.Response) => {
     }
     try {
         const ticket:any = await Ticket.findById(id)
-        const { price,  user_id } = ticket
+        const { price, user_id, stadium_id } = ticket
         const user:any = await User.findById(user_id)
+        const stadium:any = await Stadium.findById(stadium_id)
         user.balance = user.balance + price
         for( let i = 0; i < user.ticket_id.length; i++){
             if ( user.ticket_id[i]._id.valueOf() == id) { 
                 user.ticket_id.splice(i, 1)
             }
         }
+        stadium.ticketsAvailable = stadium.ticketsAvailable + 1
         await user.save()
+        await stadium.save()
         const data = await Ticket.deleteOne({_id: id})
         return res.status(200).send({status:"OK", data, message:`Ticket deleted with ID:${id}`})
     } 
