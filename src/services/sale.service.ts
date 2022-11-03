@@ -9,7 +9,7 @@ const postSale = async (idUser:number, idTicket:number) => {
             "INSERT INTO user_ticket (id_user, id_ticket) VALUES ($1, $2);",
             [idUser, idTicket]
         )
-        await ticketService.updateTickets({id:idTicket, state:true})
+        await ticketService.updateTicket({id:idTicket, state:true})
         const priceTicket = await client.query(
             "SELECT price FROM tickets WHERE id_ticket=$1",
             [idTicket]
@@ -45,7 +45,7 @@ const postRefund = async (idUser:number, idTicket:number) => {
         )
         const newBalance = priceTicket.rows[0] + balance.rows[0]
         await creditCardService.updateCreditCard({balance:newBalance}, idUser)
-        await ticketService.updateTickets({id:idTicket, state:false})
+        await ticketService.updateTicket({id:idTicket, state:false})
         return client.query("COMMIT;")
     } catch (error) {
         await client.query("ROLLBACK;")

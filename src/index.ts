@@ -8,7 +8,7 @@ import saleRouter from './routes/sale.router'
 
 dotenv.config()
 const app = express();
-const PORT = process.env.PORT_DEV;
+const PORT = process.env.PORT;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }))
