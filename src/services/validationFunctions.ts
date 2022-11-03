@@ -1,24 +1,12 @@
 const validateEmail = (email: string) => {
-    var validEmail = /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/
-    if (validEmail.test(email)) {
-        return true
-    } else {
-        return false
-    }
-}
-const validatePass = (password: string) => {
-    if (password.length >= 6 && /[0-9]/.test(password) && hasUppercase(password)) return true
+    let validEmail = /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/
+    if (validEmail.test(email)) return true
     return false
 }
-function hasUppercase(password: string) {
-    let res = false
-    password.split('').forEach((e) => {
-        if (e == e.toUpperCase()) {
-            res = true
-        }
-    })
-    return res
-};
-module.exports = { validateEmail, validatePass }
+const validatePass = (password: string) => {
+    let pass = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])([A-Za-z\d$@$!%*?&]|[^ ]){6,12}$/
+    if (pass.test(password)) return true
+    return false
+}
 
-console.log(hasUppercase('njnsnk').toString)
+module.exports = { validateEmail, validatePass }

@@ -1,5 +1,4 @@
-import 'dotenv/config'
-
+require('dotenv').config()
 const { Client } = require('pg')
 
 const clients = new Client({
