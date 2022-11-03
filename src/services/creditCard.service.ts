@@ -13,6 +13,18 @@ const getCreditCard = async (idUser:number) => {
     }
 }
 
+const postCreditCard = async (card: { nameCard:string, expiration:Date, created:Date, balance:number, cvv:number, cardNumber:string }, idUser:number) => {
+    try {
+        return await client.query(
+            "INSERT INTO creditcard (name_card, expiration, created, balance, cvv, number, id_user) VALUES ($1,$2,$3,$4,$5,$6,$7);",
+            [card.nameCard, card.expiration, card.created, card.balance, card.cvv, card.cardNumber, idUser]
+        )
+    } catch (error) {
+        console.error(`Some wrong in getCreditCard service: ${error}`)
+        throw error
+    }
+}
+
 const updateCreditCard = async (card: {nameCard?:string, expiration?:Date, balance?:number, cvv?:number, cardNumber?:string}, id:number) => {
     try {
         const creditCardUpdated = await client.query(
@@ -42,5 +54,6 @@ const deleteCreditCard = async (id:number) => {
 export = {
     updateCreditCard,
     getCreditCard,
-    deleteCreditCard
+    deleteCreditCard,
+    postCreditCard
 }

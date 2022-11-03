@@ -1,4 +1,5 @@
 import client from '../database/conection'
+import creditCardService from './creditCard.service'
 
 const getUsers = async () => {
     try {
@@ -33,10 +34,7 @@ const postUser = async (user: { name:string, age:number, email:string, password:
             "INSERT INTO users (name_user, age, email, password, birthday, created, lastname) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id_user;",
             [user.name, user.age, user.email, user.password, user.birthday, user.created, user.lastname]
         )
-        await client.query(
-            "INSERT INTO creditcard (name_card, expiration, created, balance, cvv, number, id_user) VALUES ($1,$2,$3,$4,$5,$6,$7);",
-            [card.nameCard, card.expiration, card.created, card.balance, card.cvv, card.cardNumber, userPosted.rows[0].id_user]
-        )
+        await creditCardService.postCreditCard(card, userPosted.rows[0].id_user)
         return await client.query("COMMIT;")
     } catch (error) {
         await client.query("ROLLBACK;")
