@@ -64,11 +64,24 @@ const deleteTickets = async (id: number) => {
     }
 }
 
+const getTicketsAvailable = async () => {
+    try {
+        const res = await client.query(
+            "SELECT  count(state) FROM tickets WHERE state=false;"
+        )
+        return res.rows[0]
+    } catch (error) {
+        console.error(`Some wrong in getTicketsAvailable service: ${error}`)
+        throw error
+    }
+}
+
 export = {
     getTickets,
     getOneTicket,
     postTickets,
     updateTickets,
     deleteTickets,
+    getTicketsAvailable
 }
 

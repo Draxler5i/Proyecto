@@ -1,7 +1,8 @@
 import { object, number, date, string } from "yup"
 
 const schemaCreditCard = object({
-    nameCard:string(),
+    nameCard:string()
+        .required(),
     number:string()
         .required()
         .min(15,"The number must have at least 15 characters")

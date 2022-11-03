@@ -1,12 +1,11 @@
-import { Request, Response } from 'express'
 import userService from '../services/user.service'
 import encryptor from '../security/encryp'
 import validateUser from '../validations/user.validation'
-import validateCard from '../validations/creditCard.calidation'
+import validateCard from '../validations/creditCard.validation'
 import validateCredential from '../validations/credential.validation'
 import jwt from 'jsonwebtoken'
 
-const register = async (req: Request, res: Response) => {
+const register = async (req:any, res:any) => {
     const { password, birthday } = req.body.user
     const { expiration } = req.body.card
     try {
@@ -18,14 +17,14 @@ const register = async (req: Request, res: Response) => {
         req.body.card.expiration = new Date(expiration)
         req.body.user.created = req.body.card.created = new Date(Date.now())
         const data = await userService.postUsers(req.body.user, req.body.card)
-        res.status(201).send({status: "OK", data, message:`User created`})
+        res.status(201).send({status: "OK", data, message:"User created"})
     } catch (error) {
         console.error(`Some wrong in register controller: ${error}`)
         res.send({ status:"FAILED", data: { error }})
     }
 }
 
-const login = async (req:Request, res:Response) => {
+const login = async (req:any, res:any) => {
     try {
         await validateCredential.validate(req.body)
         const user = await userService.existUser(req.body.email)
@@ -45,7 +44,7 @@ const login = async (req:Request, res:Response) => {
             email: user[0].email
         }, process.env.TOKEN_SECRET as string)
         res.json({
-            token, data: 'Welcome'
+            token, data: "Welcome"
         })
     } catch (error) {
         console.error(`Some wrong in login controller: ${error}`)

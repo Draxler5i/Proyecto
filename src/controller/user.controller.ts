@@ -1,11 +1,10 @@
-import { Request, Response } from 'express'
 import userService from '../services/user.service'
 
 const message = {
     status: "FAILED", data:{ error: "The ID is missing or is empty" }
 }
 
-const getAllUsers = async (req: Request, res: Response) => {
+const getAllUsers = async (req: any, res: any) => {
     try {
         const data = await userService.getUsers()
         res.send({ status: "OK", data })
@@ -15,7 +14,7 @@ const getAllUsers = async (req: Request, res: Response) => {
     }
 }
 
-const getUser = async (req: Request, res: Response) => {
+const getUser = async (req: any, res: any) => {
     const id = parseInt(req.params.id)
     if(!id) res.status(400).send(message)
     try {
@@ -27,7 +26,7 @@ const getUser = async (req: Request, res: Response) => {
     }
 }
 
-const updateUser = async (req: Request, res: Response) => {
+const updateUser = async (req: any, res: any) => {
     const id = parseInt(req.params.id)
     if(!id) res.status(400).send(message)
     req.body.id = id
@@ -40,7 +39,7 @@ const updateUser = async (req: Request, res: Response) => {
     }
 }
 
-const deleteUser = async (req: Request, res: Response) => {
+const deleteUser = async (req: any, res: any) => {
     const id = parseInt(req.params.id)
     if(!id) res.status(400).send(message)
     try {

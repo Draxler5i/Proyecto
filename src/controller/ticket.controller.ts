@@ -1,4 +1,3 @@
-import { Request, Response } from 'express'
 import ticketService from '../services/ticket.service'
 import validateTicket from '../validations/ticket.validation'
 
@@ -7,7 +6,7 @@ const message = {
     data:{ error: "The ID is missing or is empty" }
 }
 
-const getAllTickets = async (req: Request, res: Response) => {
+const getAllTickets = async (req: any, res: any) => {
     try {
         const data = await ticketService.getTickets()
         res.send({ status: "OK", data })
@@ -17,7 +16,7 @@ const getAllTickets = async (req: Request, res: Response) => {
     }
 }
 
-const getTicket = async (req: Request, res: Response) => {
+const getTicket = async (req: any, res: any) => {
     const id = parseInt(req.params.id)
     if(!id) res.status(400).send(message)
     try {
@@ -29,7 +28,7 @@ const getTicket = async (req: Request, res: Response) => {
     }
 }
 
-const postNewTicket = async (req: Request, res: Response) => {
+const postNewTicket = async (req: any, res: any) => {
     const { matchDay } = req.body
     try {
         await validateTicket.validate(req.body)
@@ -43,7 +42,7 @@ const postNewTicket = async (req: Request, res: Response) => {
     }
 }
 
-const updateTicket = async (req: Request, res: Response) => {
+const updateTicket = async (req: any, res: any) => {
     const id = parseInt(req.params.id)
     if(!id) res.status(400).send(message)
     req.body.id = id
@@ -56,7 +55,7 @@ const updateTicket = async (req: Request, res: Response) => {
     }
 }
 
-const deleteTicket = async (req: Request, res: Response) => {
+const deleteTicket = async (req: any, res: any) => {
     const id = parseInt(req.params.id)
     if(!id) res.status(400).send(message)
     try {

@@ -10,9 +10,10 @@
     "clean": "rm -rf build",
     "start": "ts-node src/index.ts"
   },
-  "author": "Daniel Merida",
+  "author": "Anahi Callejas",
   "license": "ISC",
   "devDependencies": {
+    "@types/pg": "^8.6.5",
     "@types/bcrypt": "^5.0.0",
     "@types/express": "^4.17.14",
     "@types/jsonwebtoken": "^8.5.9",
@@ -23,7 +24,6 @@
     "typescript": "^3.9.10"
   },
   "dependencies": {
-    "@types/pg": "^8.6.5",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.1",
     "cross-env": "^7.0.3",
