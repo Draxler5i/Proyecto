@@ -1,5 +1,4 @@
-import userService from '../services/user.service'
-import Express from 'express';
+import Express from 'express'
 import User from '../models/User'
 
 const getAllUsers = async (req:Express.Request, res:Express.Response) => {
@@ -15,18 +14,18 @@ const getAllUsers = async (req:Express.Request, res:Express.Response) => {
     }
 }
 
-const postNewUser = async (req:any, res:any) => {
-    
-    const { name, last_name, email, password } = req.body
+const postNewUser = async (req:Express.Request, res:Express.Response) => {
+    const {name, last_name, email, password, birthday, creditCardNumber, creditCardOwner, expirationDate, cvv, balance} = req.body
     if(!name || !last_name || !email || !password){
-        res.status(400).send({
+        return res.status(400).send({
             status: "FAILED",
             data:{
                 error: "Some atributes are missing or are empty"
             }
         })
-    }else if(password.length < 6){
-        res.status(400).send({
+    }
+    if(password.length < 6){
+        return res.status(400).send({
             status: "FAILED",
             data:{
                 error: "You have an insecure password, it should have at least 6 characters"
@@ -34,17 +33,19 @@ const postNewUser = async (req:any, res:any) => {
         })
     }
     try {
-        await userService.postUsers(req.body)
-        res.status(201).send({status: "OK", message:`User created`})
-    } catch (error) {
+        const newUser = new User({ name, last_name, email, password, birthday, creditCardNumber, creditCardOwner, expirationDate, cvv, balance })
+        await newUser.save()
+        return res.status(201).send({status: "OK", message:`User created`})
+    } 
+    catch (error) {
         res.send({ status:"FAILED", data: { error }})
     }
 }
 
-const updateUser = async (req:any, res:any) => {
+const updateUser = async (req:Express.Request, res:Express.Response) => {
     const { id } = req.params
     if(!id){
-        res.status(400).send({
+        return res.status(400).send({
             status: "FAILED",
             data:{
                 error: "ID is missing or is empty"
@@ -52,17 +53,18 @@ const updateUser = async (req:any, res:any) => {
         })
     }
     try {
-        const data = await userService.updateUsers(id, req.body)
-        res.status(200).send({status:"OK", data, message:`User updated with ID:${id}`})
-    } catch (error) {
+        const newData = await User.updateOne({ _id:id }, { $set: req.body})
+        return res.status(200).send({status:"OK", newData, message:`User updated with ID:${id}`})
+    } 
+    catch (error) {
         res.send({ status:"FAILED", data: { error }})
     }
 }
 
-const deleteUser = async (req:any, res:any) => {
+const deleteUser = async (req:Express.Request, res:Express.Response) => {
     const { id } = req.params
     if(!id){
-        res.status(400).send({
+        return res.status(400).send({
             status: "FAILED",
             data:{
                 error: "ID is missing or is empty"
@@ -70,9 +72,10 @@ const deleteUser = async (req:any, res:any) => {
         })
     }
     try {
-        const data = await userService.deleteUsers(id)
-        res.status(200).send({status:"OK", data, message:`User deleted with ID:${id}`})
-    } catch (error) {
+        const removedData = await User.deleteOne({_id: id})
+        return res.status(200).send({status:"OK", removedData, message:`User deleted with ID:${id}`})
+    } 
+    catch (error) {
         res.send({ status:"FAILED", data: { error }})
     }
 }

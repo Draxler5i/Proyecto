@@ -1,4 +1,4 @@
-import { Router } from 'express'
+import Router from 'express'
 import express from 'express'
 const jwt = require('jsonwebtoken')
 const router = Router()
