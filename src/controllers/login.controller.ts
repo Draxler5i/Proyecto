@@ -12,7 +12,6 @@ const loginUser = async(req:Express.Request, res:Express.Response)=>{
     const entryPassword: any = req.body.password
     const user:any = await User.findOne({ email: entryEmail })
     if(entryEmail == user.email && bcrypt.compareSync(entryPassword, user.password)){
-        console.log(bcrypt.compareSync(entryPassword, user.password))
         const userForToken = {
             id: user._id,
             email: user.email

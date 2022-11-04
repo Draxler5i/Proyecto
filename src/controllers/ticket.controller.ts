@@ -27,7 +27,6 @@ const postNewTicket = async (req:Express.Request, res:Express.Response) => {
     if (authorization && authorization.toLowerCase().startsWith('bearer')){
         token = authorization.substring(7)
     }
-    console.log(authorization)
     try{
         const decodedToken = jwt.verify(token, JWT_KEY)
     }

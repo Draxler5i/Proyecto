@@ -36,7 +36,6 @@ const postNewUser = async (req:Express.Request, res:Express.Response) => {
     try {
         const saltRound = 10
         const passwordHash:any = bcrypt.hashSync(password, saltRound)
-        console.log(passwordHash)
         const newUser = new User({ name, last_name, email, password: passwordHash, birthday, creditCardNumber, creditCardOwner, expirationDate, cvv, balance })
         await newUser.save()
         return res.status(201).send({status: "OK", message:`User created`})
