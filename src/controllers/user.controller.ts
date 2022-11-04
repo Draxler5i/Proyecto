@@ -1,4 +1,5 @@
 import Express from 'express'
+import bcrypt from 'bcrypt'
 import User from '../models/User'
 
 const getAllUsers = async (req:Express.Request, res:Express.Response) => {
@@ -33,7 +34,10 @@ const postNewUser = async (req:Express.Request, res:Express.Response) => {
         })
     }
     try {
-        const newUser = new User({ name, last_name, email, password, birthday, creditCardNumber, creditCardOwner, expirationDate, cvv, balance })
+        const saltRound = 10
+        const passwordHash:any = bcrypt.hashSync(password, saltRound)
+        console.log(passwordHash)
+        const newUser = new User({ name, last_name, email, password: passwordHash, birthday, creditCardNumber, creditCardOwner, expirationDate, cvv, balance })
         await newUser.save()
         return res.status(201).send({status: "OK", message:`User created`})
     } 

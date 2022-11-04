@@ -1,7 +1,10 @@
 import Express from 'express'
+import jwt from 'jsonwebtoken'
 import User from '../models/User'
 import Ticket from '../models/Ticket'
 import Stadium from '../models/Stadium'
+
+const {JWT_KEY}:any = process.env
 
 const getAllTickets = async (req:Express.Request, res:Express.Response) => {
     try {
@@ -18,6 +21,26 @@ const getAllTickets = async (req:Express.Request, res:Express.Response) => {
 
 const postNewTicket = async (req:Express.Request, res:Express.Response) => {
     const { price, currency, match_day, stadium_id, stadium_name, seat, user_id } = req.body
+
+    const authorization = req.get('authorization')
+    let token:any = null
+    if (authorization && authorization.toLowerCase().startsWith('bearer')){
+        token = authorization.substring(7)
+    }
+    console.log(authorization)
+    try{
+        const decodedToken = jwt.verify(token, JWT_KEY)
+    }
+    catch (error){
+        return res.status(401).send({
+            status: "FAILED",
+            data:{
+                error: error
+            }
+        })
+    }
+    // if(!token || !decodedToken.id){
+
     if(!price || !currency || !match_day || !stadium_name){
         return res.status(400).send({
             status: "FAILED",
