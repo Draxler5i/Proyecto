@@ -51,6 +51,14 @@ const postNewTicket = async (req:Express.Request, res:Express.Response) => {
     }
     try {
         const user:any = await User.findById(user_id)
+        if(user.ticket_id.length === 10){
+            return res.status(400).send({
+                status: 'FAILED',
+                data:{
+                    error: "We are sorry you cannot purchase more than 10 tickets"
+                }
+            })
+        }
         const stadium:any = await Stadium.findById(stadium_id)
         if(stadium.ticketsAvailable == 0){
             return res.status(400).send({
