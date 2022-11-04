@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import ticketController from '../controllers/ticket.controller'
-import { authorization } from '../services/authorization.service'
+import { authorization } from '../middlewares/authorization.middleware'
 const router = Router()
 
 router

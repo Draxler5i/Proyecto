@@ -1,11 +1,7 @@
 import Express from 'express'
-import jwt from 'jsonwebtoken'
 import User from '../models/User'
 import Ticket from '../models/Ticket'
 import Stadium from '../models/Stadium'
-
-
-const {JWT_KEY}:any = process.env
 
 const getAllTickets = async (req:Express.Request, res:Express.Response) => {
     try {

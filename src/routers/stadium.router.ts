@@ -5,5 +5,6 @@ const router = Router()
 router
     .get('/', stadiumController.getAllStadiums)
     .post('/', stadiumController.postNewStadium)
+    .put('/:id', stadiumController.updateStadium)
 
 export = router
