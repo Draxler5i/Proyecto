@@ -1,6 +1,6 @@
-import dotenv from 'dotenv'
-import './database/connection'
 import express from 'express'
+import './database/connection'
+import dotenv from 'dotenv'
 import userRouter from './routers/user.router'
 import ticketRouter from './routers/ticket.router'
 import stadiumRouter from './routers/stadium.router'
