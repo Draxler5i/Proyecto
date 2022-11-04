@@ -1,6 +1,10 @@
 require('dotenv').config()
 const express = require('express')
-const services = require('./services/service')
+const log = require('./routes/login.route')
+const ticket = require('./routes/ticket.route')
+const users = require('./routes/user.route')
+const sell = require('./routes/sell.route')
+
 const session = require('express-session')
 const auth = require('./jwt/auth')
 const app = express()
@@ -13,7 +17,13 @@ app.use(session({
 }))
 
 app.use(express.json())
-app.get('/v1/users', auth, services.getUsers)
+app.use(express.urlencoded({ extended: false }))
+app.use('/v1/login', log)
+app.use('/v1/users', users)
+app.use('/v1/tickets', ticket)
+app.use('/v1/sales', sell)
+
+/*app.get('/v1/users', auth, services.getUsers)
 app.get('/v1/ticket', auth, services.getTicket)
 app.get('/v1/stadium', auth, services.getStadiums)
 app.get('/v1/sells', auth, services.getSells)
@@ -38,7 +48,7 @@ app.delete('/v1/sells/:id', auth, services.deleteSell)
 app.post('/v1/login', services.login)
 app.get('/v1//home', auth, services.home)
 app.post('/v1/welcome', auth, services.welcome)
-
+*/
 app.listen(PORT, () => {
   console.log(`Server on port`, PORT)
 })
