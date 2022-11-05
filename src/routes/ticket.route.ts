@@ -7,6 +7,6 @@ route
     .get('/', ticketService.getTicket)
     .post('/', ticketService.createTicket)
     .put('/:id', ticketService.createTicket)
-// .delete('/refund/:id', ticketService.refund)
+    .delete('/:id', ticketService.deleteTicket)
 
 export = route

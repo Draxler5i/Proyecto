@@ -3,14 +3,14 @@ const { QueryResult } = require('pg')
 const client = require('../postgres/connection')
 const encrypt = require('../security/encryption')
 client.connect()
+
 const login = async (req: Express.Request, res: Express.Response) => {
     const { email, password } = req.body
-
     if (email && password) {
         await client.query('SELECT * FROM public.user WHERE email = $1', [email], (error: Error, results: typeof QueryResult) => {
             if (error) return res.send(error)
             if (results.rows.length === 0) return res.send('Incorrect email')
-            if (!encrypt.validatePassword.validatePassword(password, results.rows[0].password)) return res.send('Incorrect Password!')
+            if (!encrypt.validatePassword(password, results.rows[0].password)) return res.send('Incorrect Password!')
             const token = jwtt.sign(
                 { email },
                 process.env.TOKEN,

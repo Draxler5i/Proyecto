@@ -1,6 +1,6 @@
 const { QueryResult } = require('pg')
 const client = require('../postgres/connection')
-const getNumberOfTickets = require('./ticket.service')
+const ticket = require('./ticket.service')
 const getSells = (_req: Express.Request, res: Express.Response) => {
     try {
         client.query('SELECT * from sells', (error: Error, result: typeof QueryResult) => {
@@ -101,54 +101,69 @@ const getSaldo = (request: Express.Request, response: Express.Response) => {
         throw (e)
     }
 }
-const createSell = (request: Express.Request, response: Express.Response) => {
+const createSell = async (request: Express.Request, response: Express.Response) => {
     const { user_id, sell_date, tickets } = request.body
     const arr: { ticket_id: number; quantity: number }[] = tickets
     let total = 0
     let disponibleTicket = true
     for (let i = 0; i < arr.length; i++) {
         total += arr[i].quantity
-        if (!getNumberOfTickets(arr[i].ticket_id, arr[i].quantity)) disponibleTicket = false
+        if (!ticket.getNumberOfTickets(arr[i].ticket_id, arr[i].quantity)) disponibleTicket = false
     }
-    if (total >= 10) {
-        if (disponibleTicket) {
-            try {
-                client.query('INSERT INTO public.sells ( user_id, sell_date ) VALUES ($1, $2) RETURNING *', [user_id, sell_date], (error: Error, results: typeof QueryResult) => {
-                    if (error) {
-                        console.log(error)
-                        throw error
-                    }
-                    for (let index = 0; index < arr.length; index++) {
-                        try {
-                            client.query('INSERT INTO public.detail ( sells_id, ticket_id, quantity ) VALUES ($1, $2, $3) RETURNING *', [results.rows[0].sells_id, arr[index].ticket_id, arr[index].quantity], (error: Error, results: typeof QueryResult) => {
+    if (total >= 10) return response.send(`Quantity of tickets must not surpass 10.`)
+    if (disponibleTicket) return response.send(`There are no enough tickets for the purchase.`)
+    try {
+        client.query('INSERT INTO public.sells ( user_id, sell_date ) VALUES ($1, $2) RETURNING *',
+            [user_id, sell_date], (error: Error, results: typeof QueryResult) => {
+                if (error) {
+                    console.log(error)
+                    throw error
+                }
+                for (let index = 0; index < arr.length; index++) {
+                    try {
+                        client.query('INSERT INTO public.detail ( sells_id, ticket_id, quantity ) VALUES ($1, $2, $3) RETURNING *',
+                            [results.rows[0].sells_id, arr[index].ticket_id, arr[index].quantity],
+                            (error: Error, results: typeof QueryResult) => {
                                 if (error) {
                                     console.log(error)
                                     throw error
                                 }
-                                client.query('update ticket set quantity = ((select ti.quantity from ticket as ti where ticket_id=$1) - $2) where ticket_id=$1 RETURNING *', [arr[index].ticket_id, arr[index].quantity], (error: Error, res: typeof QueryResult) => {
-                                    if (error) {
-                                        console.log(error)
-                                        throw error
-                                    }
-                                    //response.status(201).send(`Detail added with ticket id: ${results.rows[0].ticket_id} and quantity: ${results.rows[0].quantity}`)
-                                })
+                                client.query('update ticket set quantity = ((select ti.quantity from ticket as ti where ticket_id=$1) - $2) where ticket_id=$1 RETURNING *',
+                                    [arr[index].ticket_id, arr[index].quantity],
+                                    (error: Error, res: typeof QueryResult) => {
+                                        if (error) {
+                                            console.log(error)
+                                            throw error
+                                        }
+                                    })
+
                             })
-                        } catch (e) {
-                            console.log(e)
-                            throw (e)
-                        }
+                        client.query('select price from ticket where ticket_id=$1',
+                            [arr[index].ticket_id],
+                            (error: Error, res: typeof QueryResult) => {
+                                if (error) {
+                                    console.log(error)
+                                    throw error
+                                }
+                                client.query(`UPDATE creditcard set saldo=((select ca.saldo from creditcard as ca where user_id= $1) - (${res.rows[0].price} * ${arr[index].quantity})) where user_id=$1`,
+                                    [user_id],
+                                    (error: Error, res: typeof QueryResult) => {
+                                        if (error) {
+                                            console.log(error)
+                                            throw error
+                                        }
+                                    })
+                            })
+                    } catch (e) {
+                        console.log(e)
+                        throw (e)
                     }
-                    response.status(201).send(`Sell added with sell date: ${results.rows[0].sell_date}}`)
-                })
-            } catch (e) {
-                console.log(e)
-                throw (e)
-            }
-        } else {
-            response.send(`There are no enough tickets for the purchase.`)
-        }
-    } else {
-        response.send(`Quantity of tickets must not surpass 10.`)
+                }
+                response.status(201).send(`Sell added with sell date: ${results.rows[0].sell_date}}`)
+            })
+    } catch (e) {
+        console.log(e)
+        throw (e)
     }
 }
 
@@ -199,22 +214,6 @@ const returnSell = (request: Express.Request, response: Express.Response) => {
         throw (e)
     }
 }
-/*const updateSell = (request: Express.Request, response: Express.Response) => {
-    const id = parseInt(request.params.id)
-    const { user_id, ticket_id } = request.body
-    try {
-        client.query('UPDATE sells SET user_id = $1, ticket_id= $2 WHERE user_id = $3', [user_id, ticket_id, id], (error: Error, results: typeof QueryResult) => {
-            if (error) {
-                throw error
-            }
-            response.status(200).send(`Sell modified with user id: ${user_id}, ticket id: ${ticket_id}`)
-        })
-    } catch (error) {
-        console.log(error)
-        throw (error)
-    }
-}*/
-
 const createDetail = (request: Express.Request, response: Express.Response) => {
     const { sells_id, ticket_id, quantity } = request.body
     try {

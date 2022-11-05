@@ -17,23 +17,22 @@ const getStadiums = (_req: Express.Request, res: Express.Response) => {
 const createStadium = (request: Express.Request, response: Express.Response) => {
     const { stadium_name, address } = request.body
     try {
-        client.query('INSERT INTO public.sells ( stadium_name, address ) VALUES ($1, $2) RETURNING *', [stadium_name, address], (error: Error, results: typeof QueryResult) => {
+        client.query('INSERT INTO public.stadium ( stadium_name, address ) VALUES ($1, $2)', [stadium_name, address], (error: Error, results: typeof QueryResult) => {
             if (error) {
                 throw error
             }
-            response.status(201).send(`Stadium added with stadium_name: ${results.rows[0].stadium_name}, stadium address: ${results.rows[0].address}`)
+            response.status(201).send(`Stadium added with stadium_name: ${stadium_name}, stadium address: ${address}`)
         })
     } catch (e) {
         console.log(e)
         throw (e)
     }
 }
-
-const updateStadum = (request: Express.Request, response: Express.Response) => {
+const updateStadium = (request: Express.Request, response: Express.Response) => {
     const id = parseInt(request.params.id)
     const { stadium_name, address } = request.body
     try {
-        client.query('UPDATE stadium SET stadium_name = $1, address = $2 WHERE user_id = $3', [stadium_name, address, id], (error: Error, results: typeof QueryResult) => {
+        client.query('UPDATE stadium SET stadium_name = $1, address = $2 WHERE stadium_id = $3', [stadium_name, address, id], (error: Error, results: typeof QueryResult) => {
             if (error) {
                 throw error
             }
@@ -58,6 +57,7 @@ const deleteStadium = (request: Express.Request, response: Express.Response) => 
         throw (error)
     }
 }
+
 export = {
-    getStadiums, createStadium, updateStadum, deleteStadium
+    getStadiums, createStadium, updateStadium, deleteStadium
 }

@@ -7,5 +7,6 @@ route
     .get('/', userService.getUsers)
     .post('/', userService.createUser)
     .put('/:id', userService.updateUser)
-    .delete('/refund/:id', userService.deleteUser)
+    .delete('/:id', userService.deleteUser)
+
 export = route

@@ -6,7 +6,7 @@ const route = Router()
 route
     .get('/', stadiumService.getStadiums)
     .post('/', stadiumService.createStadium)
-    .put('/:id', stadiumService.updateStadum)
-// .delete('/:id', stadiumService.deleteStadium)
+    .put('/:id', stadiumService.updateStadium)
+    .delete('/:id', stadiumService.deleteStadium)
 
 export = route

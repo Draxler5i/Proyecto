@@ -21,7 +21,7 @@ const getNumberOfTickets = (ticket_id: number, quantity: number): boolean => {
                 console.log(error)
                 return error
             }
-            if (results.quantity >= quantity) return true
+            if (results.rows[0].quantity >= quantity) return true
             return false
         })
     } catch (e) {

@@ -1,12 +1,13 @@
 require('dotenv').config()
-const bcrypt = require('bcrypt');
+//const bcrypt = require('bcrypt');
+import bcrypt from 'bcrypt'
 
-const encryptPassword = async (password: string) => {
-    const salt = await bcrypt.genSalt(10);
-    return await bcrypt.hash(password, salt);
+const encryptPassword = (password: string): String => {
+    const SALT = 10;
+    return bcrypt.hashSync(password, SALT);
 };
-const validatePassword = async (userPassword: string, databasePassword: string) => {
-    return await bcrypt.compare(userPassword, databasePassword)
+const validatePassword = (userPassword: string, hashedStoredPassword: string): Boolean => {
+    return bcrypt.compareSync(userPassword, hashedStoredPassword)
 };
 
 export = { encryptPassword, validatePassword }
