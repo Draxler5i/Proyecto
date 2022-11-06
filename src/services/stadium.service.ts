@@ -1,9 +1,9 @@
 const { QueryResult } = require('pg')
 const client = require('../postgres/connection')
 
-const getStadiums = (_req: Express.Request, res: Express.Response) => {
+const getStadiums = async (_req: Express.Request, res: Express.Response) => {
     try {
-        client.query('SELECT * from stadium', (error: Error, result: typeof QueryResult) => {
+        await client.query('SELECT * from stadium', (error: Error, result: typeof QueryResult) => {
             if (error) {
                 throw error
             }
@@ -14,10 +14,10 @@ const getStadiums = (_req: Express.Request, res: Express.Response) => {
         throw (e)
     }
 }
-const createStadium = (request: Express.Request, response: Express.Response) => {
+const createStadium = async (request: Express.Request, response: Express.Response) => {
     const { stadium_name, address } = request.body
     try {
-        client.query('INSERT INTO public.stadium ( stadium_name, address ) VALUES ($1, $2)', [stadium_name, address], (error: Error, results: typeof QueryResult) => {
+        await client.query('INSERT INTO public.stadium ( stadium_name, address ) VALUES ($1, $2)', [stadium_name, address], (error: Error, results: typeof QueryResult) => {
             if (error) {
                 throw error
             }
@@ -28,11 +28,11 @@ const createStadium = (request: Express.Request, response: Express.Response) => 
         throw (e)
     }
 }
-const updateStadium = (request: Express.Request, response: Express.Response) => {
+const updateStadium = async (request: Express.Request, response: Express.Response) => {
     const id = parseInt(request.params.id)
     const { stadium_name, address } = request.body
     try {
-        client.query('UPDATE stadium SET stadium_name = $1, address = $2 WHERE stadium_id = $3', [stadium_name, address, id], (error: Error, results: typeof QueryResult) => {
+        await client.query('UPDATE stadium SET stadium_name = $1, address = $2 WHERE stadium_id = $3', [stadium_name, address, id], (error: Error, results: typeof QueryResult) => {
             if (error) {
                 throw error
             }
@@ -43,10 +43,10 @@ const updateStadium = (request: Express.Request, response: Express.Response) => 
         throw (error)
     }
 }
-const deleteStadium = (request: Express.Request, response: Express.Response) => {
+const deleteStadium = async (request: Express.Request, response: Express.Response) => {
     const id = parseInt(request.params.id)
     try {
-        client.query('DELETE FROM stadium WHERE stadium_id = $1', [id], (error: Error, results: typeof QueryResult) => {
+        await client.query('DELETE FROM stadium WHERE stadium_id = $1', [id], (error: Error, results: typeof QueryResult) => {
             if (error) {
                 throw error
             }

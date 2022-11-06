@@ -1,9 +1,9 @@
 const { QueryResult } = require('pg')
 const client = require('../postgres/connection')
 
-const getTicket = (_req: Express.Request, res: Express.Response) => {
+const getTicket = async (_req: Express.Request, res: Express.Response) => {
     try {
-        client.query('SELECT * from ticket', (error: Error, result: typeof QueryResult) => {
+        await client.query('SELECT * from ticket', (error: Error, result: typeof QueryResult) => {
             if (error) {
                 throw error
             }
@@ -30,10 +30,10 @@ const getNumberOfTickets = (ticket_id: number, quantity: number): boolean => {
     }
     return false
 }
-const createTicket = (request: Express.Request, response: Express.Response) => {
+const createTicket = async (request: Express.Request, response: Express.Response) => {
     const { price, currency, match_day, stadium_id, type, quantity } = request.body
     try {
-        client.query('INSERT INTO ticket ( price, currency, match_day, stadium_id, type, quantity) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [price, currency, match_day, stadium_id, type, quantity], (error: Error, results: typeof QueryResult) => {
+        await client.query('INSERT INTO ticket ( price, currency, match_day, stadium_id, type, quantity) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [price, currency, match_day, stadium_id, type, quantity], (error: Error, results: typeof QueryResult) => {
             if (error) {
                 throw error
             }
@@ -44,11 +44,11 @@ const createTicket = (request: Express.Request, response: Express.Response) => {
         throw (e)
     }
 }
-const updateTicket = (request: Express.Request, response: Express.Response) => {
+const updateTicket = async (request: Express.Request, response: Express.Response) => {
     const id = parseInt(request.params.id)
     const { price, currency, match_day, stadium_name, quantity } = request.body
     try {
-        client.query('UPDATE ticket SET price = $1, currency = $2, match_day = $3, stadium_name = $4, quantity = $5 WHERE ticket_id = $6', [price, currency, match_day, stadium_name, quantity, id], (error: Error, results: typeof QueryResult) => {
+        await client.query('UPDATE ticket SET price = $1, currency = $2, match_day = $3, stadium_name = $4, quantity = $5 WHERE ticket_id = $6', [price, currency, match_day, stadium_name, quantity, id], (error: Error, results: typeof QueryResult) => {
             if (error) {
                 throw error
             }
@@ -59,10 +59,10 @@ const updateTicket = (request: Express.Request, response: Express.Response) => {
         throw (error)
     }
 }
-const deleteTicket = (request: Express.Request, response: Express.Response) => {
+const deleteTicket = async (request: Express.Request, response: Express.Response) => {
     const id = parseInt(request.params.id)
     try {
-        client.query('DELETE FROM ticket WHERE ticket_id = $1', [id], (error: Error, results: typeof QueryResult) => {
+        await client.query('DELETE FROM ticket WHERE ticket_id = $1', [id], (error: Error, results: typeof QueryResult) => {
             if (error) {
                 throw error
             }

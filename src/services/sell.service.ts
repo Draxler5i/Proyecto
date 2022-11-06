@@ -1,9 +1,10 @@
 const { QueryResult } = require('pg')
 const client = require('../postgres/connection')
 const ticket = require('./ticket.service')
-const getSells = (_req: Express.Request, res: Express.Response) => {
+client.connect()
+const getSells = async (_req: Express.Request, res: Express.Response) => {
     try {
-        client.query('SELECT * from sells', (error: Error, result: typeof QueryResult) => {
+        await client.query('SELECT * from sells', (error: Error, result: typeof QueryResult) => {
             if (error) {
                 throw error
             }
@@ -16,6 +17,7 @@ const getSells = (_req: Express.Request, res: Express.Response) => {
 }
 const getSellsDetails = async (_req: Express.Request, res: Express.Response) => {
     try {
+        await client.query('BEGIN')
         let details: { sells_id: number, user_id: number, sell_date: string, detail: { detail_id: any, sells_id: any, ticket_id: any, quantity: any }[] }[] = []
         await client.query('SELECT * from sells', async (error: Error, result: typeof QueryResult) => {
             if (error) {
@@ -23,27 +25,24 @@ const getSellsDetails = async (_req: Express.Request, res: Express.Response) => 
             }
             for (let index = 0; index < result.rows.length; index++) {
                 let sell_id = parseInt(result.rows[index].sells_id)
-                try {
-                    client.query('SELECT * from detail where sells_id=$1', [sell_id], async (error: Error, result1: typeof QueryResult) => {
-                        if (error) {
-                            throw error
-                        }
-                        details.push({ sells_id: parseInt(result.rows[index].sells_id), user_id: parseInt(result.rows[index].user_id), sell_date: String(result.rows[index].sells_id), detail: result1.rows[0] })
-                    })
-                } catch (e) {
-                    console.log(e)
-                    throw (e)
-                }
+                await client.query('SELECT * from detail where sells_id=$1', [sell_id], async (error: Error, result1: typeof QueryResult) => {
+                    if (error) {
+                        throw error
+                    }
+                    details.push({ sells_id: parseInt(result.rows[index].sells_id), user_id: parseInt(result.rows[index].user_id), sell_date: String(result.rows[index].sells_id), detail: result1.rows[0] })
+                })
             }
         })
+        return await client.query('COMMIT;')
     } catch (e) {
+        await client.query('ROLLBACK;')
         console.log(e)
         throw (e)
     }
 }
-const getDetails = (_req: Express.Request, res: Express.Response) => {
+const getDetails = async (_req: Express.Request, res: Express.Response) => {
     try {
-        client.query('SELECT * from detail', (error: Error, result: typeof QueryResult) => {
+        await client.query('SELECT * from detail', (error: Error, result: typeof QueryResult) => {
             if (error) {
                 throw error
             }
@@ -54,10 +53,10 @@ const getDetails = (_req: Express.Request, res: Express.Response) => {
         throw (e)
     }
 }
-const getDetailsById = (req: Express.Request, res: Express.Response) => {
+const getDetailsById = async (req: Express.Request, res: Express.Response) => {
     const id = parseInt(req.params.id)
     try {
-        client.query('SELECT * from detail where sells_id=$1', [id], (error: Error, result: typeof QueryResult) => {
+        await client.query('SELECT * from detail where sells_id=$1', [id], (error: Error, result: typeof QueryResult) => {
             if (error) {
                 throw error
             }
@@ -68,10 +67,10 @@ const getDetailsById = (req: Express.Request, res: Express.Response) => {
         throw (e)
     }
 }
-const getSellsByUserId = (req: Express.Request, res: Express.Response) => {
+const getSellsByUserId = async (req: Express.Request, res: Express.Response) => {
     const id = parseInt(req.params.id)
     try {
-        client.query('SELECT * from sells where user_id=$1', [id], (error: Error, result: typeof QueryResult) => {
+        await client.query('SELECT * from sells where user_id=$1', [id], (error: Error, result: typeof QueryResult) => {
             if (error) {
                 throw error
             }
@@ -82,10 +81,10 @@ const getSellsByUserId = (req: Express.Request, res: Express.Response) => {
         throw (e)
     }
 }
-const getSaldo = (request: Express.Request, response: Express.Response) => {
+const getSaldo = async (request: Express.Request, response: Express.Response) => {
     const { user_id } = request.body
     try {
-        client.query('select sum(ca.saldo) as saldo from creditCard as ca where ca.user_id=$1', [user_id], (error: Error, results: typeof QueryResult) => {
+        await client.query('select sum(ca.saldo) as saldo from creditCard as ca where ca.user_id=$1', [user_id], (error: Error, results: typeof QueryResult) => {
             if (error) {
                 console.log(error)
                 throw error
@@ -113,116 +112,110 @@ const createSell = async (request: Express.Request, response: Express.Response) 
     if (total >= 10) return response.send(`Quantity of tickets must not surpass 10.`)
     if (disponibleTicket) return response.send(`There are no enough tickets for the purchase.`)
     try {
-        client.query('INSERT INTO public.sells ( user_id, sell_date ) VALUES ($1, $2) RETURNING *',
-            [user_id, sell_date], (error: Error, results: typeof QueryResult) => {
+        await client.query('BEGIN')
+        await client.query('INSERT INTO public.sells ( user_id, sell_date ) VALUES ($1, $2) RETURNING *',
+            [user_id, sell_date], async (error: Error, results: typeof QueryResult) => {
                 if (error) {
                     console.log(error)
                     throw error
                 }
                 for (let index = 0; index < arr.length; index++) {
-                    try {
-                        client.query('INSERT INTO public.detail ( sells_id, ticket_id, quantity ) VALUES ($1, $2, $3) RETURNING *',
-                            [results.rows[0].sells_id, arr[index].ticket_id, arr[index].quantity],
-                            (error: Error, results: typeof QueryResult) => {
-                                if (error) {
-                                    console.log(error)
-                                    throw error
-                                }
-                                client.query('update ticket set quantity = ((select ti.quantity from ticket as ti where ticket_id=$1) - $2) where ticket_id=$1 RETURNING *',
-                                    [arr[index].ticket_id, arr[index].quantity],
-                                    (error: Error, res: typeof QueryResult) => {
-                                        if (error) {
-                                            console.log(error)
-                                            throw error
-                                        }
-                                    })
-
-                            })
-                        client.query('select price from ticket where ticket_id=$1',
-                            [arr[index].ticket_id],
-                            (error: Error, res: typeof QueryResult) => {
-                                if (error) {
-                                    console.log(error)
-                                    throw error
-                                }
-                                client.query(`UPDATE creditcard set saldo=((select ca.saldo from creditcard as ca where user_id= $1) - (${res.rows[0].price} * ${arr[index].quantity})) where user_id=$1`,
-                                    [user_id],
-                                    (error: Error, res: typeof QueryResult) => {
-                                        if (error) {
-                                            console.log(error)
-                                            throw error
-                                        }
-                                    })
-                            })
-                    } catch (e) {
-                        console.log(e)
-                        throw (e)
-                    }
-                }
-                response.status(201).send(`Sell added with sell date: ${results.rows[0].sell_date}}`)
-            })
-    } catch (e) {
-        console.log(e)
-        throw (e)
-    }
-}
-
-const returnSell = (request: Express.Request, response: Express.Response) => {
-    const id = parseInt(request.params.id)
-    try {
-        client.query('UPDATE creditcard set saldo=((select ca.saldo from creditcard as ca where user_id= (select user_id from sells where sells_id=$1)) + (select sum(d.quantity*ti.price) as amount from public.detail as d, ticket as ti where d.sells_id=$1 and ti.ticket_id=d.ticket_id)) where user_id=(select user_id from sells where sells_id=$1)', [id], (error: Error, results: typeof QueryResult) => {
-            if (error) {
-                console.log(error)
-                throw error
-            }
-
-            try {
-                client.query('select ticket_id, quantity from public.detail as d, sells where d.sells_id=sells.sells_id and sells.sells_id=$1', [id], (error: Error, res1: typeof QueryResult) => {
-                    if (error) {
-                        console.log(error)
-                        throw error
-                    }
-                    for (let i = 0; i < res1.rows.length; i++) {
-                        client.query('update ticket set quantity = ((select ti.quantity from ticket as ti where ticket_id=$1) + $2) where ticket_id=$1', [res1.rows[i].ticket_id, res1.rows[i].quantity], (error: Error, res: typeof QueryResult) => {
+                    await client.query('INSERT INTO public.detail ( sells_id, ticket_id, quantity ) VALUES ($1, $2, $3) RETURNING *',
+                        [results.rows[0].sells_id, arr[index].ticket_id, arr[index].quantity],
+                        async (error: Error, results: typeof QueryResult) => {
                             if (error) {
                                 console.log(error)
                                 throw error
                             }
+                            await client.query('update ticket set quantity = ((select ti.quantity from ticket as ti where ticket_id=$1) - $2) where ticket_id=$1 RETURNING *',
+                                [arr[index].ticket_id, arr[index].quantity],
+                                (error: Error, res: typeof QueryResult) => {
+                                    if (error) {
+                                        console.log(error)
+                                        throw error
+                                    }
+                                })
                         })
-                    }
-                    client.query('delete from public.detail where sells_id=$1', [id], (error: Error, res: typeof QueryResult) => {
-                        if (error) {
-                            console.log(error)
-                            throw error
-                        }
-                    })
-                    client.query('delete from public.sells where sells_id=$1', [id], (error: Error, res: typeof QueryResult) => {
-                        if (error) {
-                            console.log(error)
-                            throw error
-                        }
-                    })
-                })
-            } catch (e) {
-                console.log(e)
-                throw (e)
-            }
-            response.status(201).send(`Sell returned with sell ID: ${id}}`)
-        })
+                    await client.query('select price from ticket where ticket_id=$1',
+                        [arr[index].ticket_id],
+                        async (error: Error, res: typeof QueryResult) => {
+                            if (error) {
+                                console.log(error)
+                                throw error
+                            }
+                            await client.query(`UPDATE creditcard set saldo=((select ca.saldo from creditcard as ca where user_id= $1) - (${res.rows[0].price} * ${arr[index].quantity})) where user_id=$1`,
+                                [user_id],
+                                (error: Error, res: typeof QueryResult) => {
+                                    if (error) {
+                                        console.log(error)
+                                        throw error
+                                    }
+                                })
+                        })
+                }
+                response.status(201).send(`Sell added with sell date: ${results.rows[0].sell_date}}`)
+            })
+        return await client.query('COMMIT;')
     } catch (e) {
+        await client.query('ROLLBACK;')
         console.log(e)
         throw (e)
     }
 }
-const createDetail = (request: Express.Request, response: Express.Response) => {
-    const { sells_id, ticket_id, quantity } = request.body
+const returnSell = async (request: Express.Request, response: Express.Response) => {
+    const id = parseInt(request.params.id)
     try {
-        client.query('INSERT INTO public.detail ( sells_id, ticket_id, quantity ) VALUES ($1, $2, $3) RETURNING *', [sells_id, ticket_id, quantity], (error: Error, results: typeof QueryResult) => {
+        await client.query('BEGIN')
+        await client.query('UPDATE creditcard set saldo=((select ca.saldo from creditcard as ca where user_id= (select user_id from sells where sells_id=$1)) + (select sum(d.quantity*ti.price) as amount from public.detail as d, ticket as ti where d.sells_id=$1 and ti.ticket_id=d.ticket_id)) where user_id=(select user_id from sells where sells_id=$1)', [id], async (error: Error, results: typeof QueryResult) => {
             if (error) {
                 console.log(error)
                 throw error
             }
-            client.query('update ticket set quantity = ((select ti.quantity from ticket as ti where ticket_id=$1) - $2) where ticket_id=$1 RETURNING *', [ticket_id, quantity], (error: Error, res: typeof QueryResult) => {
+            await client.query('select ticket_id, quantity from public.detail as d, sells where d.sells_id=sells.sells_id and sells.sells_id=$1', [id], async (error: Error, res1: typeof QueryResult) => {
+                if (error) {
+                    console.log(error)
+                    throw error
+                }
+                for (let i = 0; i < res1.rows.length; i++) {
+                    await client.query('update ticket set quantity = ((select ti.quantity from ticket as ti where ticket_id=$1) + $2) where ticket_id=$1', [res1.rows[i].ticket_id, res1.rows[i].quantity], (error: Error, res: typeof QueryResult) => {
+                        if (error) {
+                            console.log(error)
+                            throw error
+                        }
+                    })
+                }
+                await client.query('delete from public.detail where sells_id=$1', [id], (error: Error, res: typeof QueryResult) => {
+                    if (error) {
+                        console.log(error)
+                        throw error
+                    }
+                })
+                await client.query('delete from public.sells where sells_id=$1', [id], (error: Error, res: typeof QueryResult) => {
+                    if (error) {
+                        console.log(error)
+                        throw error
+                    }
+                })
+            })
+            response.status(201).send(`Sell returned with sell ID: ${id}}`)
+        })
+        return await client.query('COMMIT;')
+    } catch (e) {
+        await client.query('ROLLBACK;')
+        console.log(e)
+        throw (e)
+    }
+}
+const createDetail = async (request: Express.Request, response: Express.Response) => {
+    const { sells_id, ticket_id, quantity } = request.body
+    try {
+        await client.query('BEGIN')
+        await client.query('INSERT INTO public.detail ( sells_id, ticket_id, quantity ) VALUES ($1, $2, $3) RETURNING *', [sells_id, ticket_id, quantity], async (error: Error, results: typeof QueryResult) => {
+            if (error) {
+                console.log(error)
+                throw error
+            }
+            await client.query('update ticket set quantity = ((select ti.quantity from ticket as ti where ticket_id=$1) - $2) where ticket_id=$1 RETURNING *', [ticket_id, quantity], (error: Error, res: typeof QueryResult) => {
                 if (error) {
                     console.log(error)
                     throw error
@@ -230,27 +223,31 @@ const createDetail = (request: Express.Request, response: Express.Response) => {
                 response.status(201).send(`Detail added with ticket id: ${results.rows[0].ticket_id} and quantity: ${results.rows[0].quantity}}`)
             })
         })
+        return await client.query('COMMIT;')
     } catch (e) {
+        await client.query('ROLLBACK;')
         console.log(e)
         throw (e)
     }
 }
-const deleteSell = (request: Express.Request, response: Express.Response) => {
+const deleteSell = async (request: Express.Request, response: Express.Response) => {
     const id = parseInt(request.params.id)
     try {
-        client.query('DELETE FROM detail WHERE sells_id=$1', [id], (error: Error, results: typeof QueryResult) => {
+        await client.query('BEGIN')
+        await client.query('DELETE FROM detail WHERE sells_id=$1', [id], async (error: Error, results: typeof QueryResult) => {
             if (error) {
                 throw error
             }
-            client.query('DELETE FROM sells WHERE sells_id = $1', [id], (error: Error, res: typeof QueryResult) => {
+            await client.query('DELETE FROM sells WHERE sells_id = $1', [id], (error: Error, res: typeof QueryResult) => {
                 if (error) {
                     throw error
                 }
                 response.status(200).send(`Sell deleted with ID: ${id}`)
             })
         })
-
+        return await client.query('COMMIT;')
     } catch (error) {
+        await client.query('ROLLBACK;')
         console.log(error)
         throw (error)
     }
