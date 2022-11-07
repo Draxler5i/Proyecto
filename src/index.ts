@@ -21,3 +21,5 @@ app.use('/api/sales', verifyToken, saleRouter)
 app.listen(PORT, () => {
 	console.log('Server on port', PORT)
 })
+
+export = app

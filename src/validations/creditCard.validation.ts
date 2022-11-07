@@ -2,7 +2,7 @@ import { object, number, string } from 'yup'
 import valid from 'card-validator'
 
 const schemaCreditCard = object({
-	nameCard: string().required('The card name is required'),
+	name_card: string().required('The card name is required'),
 	number: string()
 		.test(
 			'test-number',

@@ -34,12 +34,12 @@ const postUser = async (
 		lastname: string
 	},
 	card: {
-		nameCard: string
-		expiration: Date
+		name_card: string
+		expiration: string
 		created: Date
 		balance: number
 		cvv: number
-		cardNumber: string
+		number: string
 	}
 ) => {
 	try {
@@ -112,7 +112,8 @@ const existUser = async (email: string) => {
 		const user = await client.query('SELECT * FROM users WHERE email = $1;', [
 			email,
 		])
-		return user.rows
+		if (user.rows.length > 0) return user.rows
+		return null
 	} catch (error) {
 		console.error(`Some wrong in existUser service: ${error}`)
 		throw error
@@ -122,7 +123,7 @@ const existUser = async (email: string) => {
 const getTicketsPurchased = async (idUser: number) => {
 	try {
 		const ticketsPurchased = await client.query(
-			'SELEC count(*) FROM user_ticket WHERE id_user=$1;',
+			'SELECT count(*) FROM user_ticket WHERE id_user=$1;',
 			[idUser]
 		)
 		return ticketsPurchased.rows[0]

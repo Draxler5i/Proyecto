@@ -9,7 +9,7 @@ const postSale = async (idUser: number, idTicket: number) => {
 			'INSERT INTO user_ticket (id_user, id_ticket) VALUES ($1, $2);',
 			[idUser, idTicket]
 		)
-		await ticketService.updateTicket({ id: idTicket, state: true })
+		await ticketService.updateTicketState({ id: idTicket, state: true })
 		const priceTicket = await client.query(
 			'SELECT price FROM tickets WHERE id_ticket=$1',
 			[idTicket]
@@ -18,8 +18,8 @@ const postSale = async (idUser: number, idTicket: number) => {
 			'SELECT balance FROM creditcard WHERE id_user=$1',
 			[idUser]
 		)
-		const newBalance = balance.rows[0] - priceTicket.rows[0]
-		await creditCardService.updateCreditCard({ balance: newBalance }, idUser)
+		const newBalance = balance.rows[0].balance - priceTicket.rows[0].price
+		await creditCardService.updateBalanceCreditCard(newBalance, idUser)
 		return await client.query('COMMIT;')
 	} catch (error) {
 		await client.query('ROLLBACK;')
@@ -43,9 +43,9 @@ const postRefund = async (idUser: number, idTicket: number) => {
 			'SELECT balance FROM creditcard WHERE id_user=$1',
 			[idUser]
 		)
-		const newBalance = priceTicket.rows[0] + balance.rows[0]
-		await creditCardService.updateCreditCard({ balance: newBalance }, idUser)
-		await ticketService.updateTicket({ id: idTicket, state: false })
+		const newBalance = priceTicket.rows[0].price + balance.rows[0].balance
+		await creditCardService.updateBalanceCreditCard(newBalance, idUser)
+		await ticketService.updateTicketState({ id: idTicket, state: false })
 		return await client.query('COMMIT;')
 	} catch (error) {
 		await client.query('ROLLBACK;')

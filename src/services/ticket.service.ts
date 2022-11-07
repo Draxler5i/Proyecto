@@ -58,6 +58,7 @@ const updateTicket = async (ticket: {
 	idStadium?: number
 	state?: boolean
 }) => {
+	console.log(ticket)
 	try {
 		const ticketUpdated = await client.query(
 			'UPDATE tickets SET price=$1, currency=$2, match_day=$3, id_stadium=$4, state=$5 WHERE id_ticket=$6',
@@ -73,6 +74,19 @@ const updateTicket = async (ticket: {
 		return ticketUpdated
 	} catch (error) {
 		console.error(`Some wrong in updateTickets service: ${error}`)
+		throw error
+	}
+}
+
+const updateTicketState = async (ticket: { id: number; state: boolean }) => {
+	try {
+		const ticketUpdated = await client.query(
+			'UPDATE tickets SET state=$1 WHERE id_ticket=$2',
+			[ticket.state, ticket.id]
+		)
+		return ticketUpdated
+	} catch (error) {
+		console.error(`Some wrong in updateTicketState service: ${error}`)
 		throw error
 	}
 }
@@ -109,4 +123,5 @@ export = {
 	updateTicket,
 	deleteTicket,
 	getTicketsAvailable,
+	updateTicketState,
 }

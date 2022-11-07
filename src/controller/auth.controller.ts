@@ -7,8 +7,8 @@ import jwt from 'jsonwebtoken'
 
 const register = async (req: any, res: any) => {
 	const { password, birthday } = req.body.user
-	const { expiration } = req.body.card
 	try {
+		req.body.user.birthday = new Date(birthday)
 		await validateUser.validate(req.body.user)
 		await validateCard.validate(req.body.card)
 		const user = await userService.existUser(req.body.email)
@@ -23,7 +23,6 @@ const register = async (req: any, res: any) => {
 		const passwordEncrypted = await encryptor.encrypt(password)
 		req.body.user.password = passwordEncrypted
 		req.body.user.birthday = new Date(birthday)
-		req.body.card.expiration = new Date(expiration)
 		req.body.user.created = req.body.card.created = new Date(Date.now())
 		const userPosted = await userService.postUser(
 			req.body.user,
