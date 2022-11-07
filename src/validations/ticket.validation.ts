@@ -1,11 +1,9 @@
-import { object, string, number, date } from 'yup'
+import { object, string, number } from 'yup'
 
 const schemaTicket = object({
 	price: number().required('The price is required'),
-	currency: string()
-		.required('The currency is required')
-		.length(2, 'The currency must have just 2 characters'),
-	matchDay: date(),
+	currency: string().required('The currency is required'),
+	idStadium: number().required('The stadium id is required'),
 })
 
 export = schemaTicket

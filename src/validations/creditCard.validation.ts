@@ -1,14 +1,30 @@
-import { object, number, date, string } from 'yup'
+import { object, number, string } from 'yup'
+import valid from 'card-validator'
 
 const schemaCreditCard = object({
-	nameCard: string().required(),
+	nameCard: string().required('The card name is required'),
 	number: string()
-		.required()
-		.min(15, 'The number must have at least 15 characters')
-		.max(25, 'The name must have a maximum of 25 characters'),
-	expiration: date().required(),
+		.test(
+			'test-number',
+			'Credit Card number is invalid',
+			(value) => valid.number(value).isValid
+		)
+		.required('The card number is required'),
+	expiration: string()
+		.test(
+			'test-expiration',
+			'Credit Card expiration is invalid',
+			(value) => valid.expirationDate(value).isValid
+		)
+		.required('The card expiration is required'),
 	balance: number().required().min(50, 'insufficient balance'),
-	cvv: number().required(),
+	cvv: string()
+		.test(
+			'test-cvv',
+			'Credit Card cvv is invalid',
+			(value) => valid.cvv(value).isValid
+		)
+		.required('The card cvv is required'),
 })
 
 export = schemaCreditCard

@@ -18,9 +18,16 @@ const schemaUser = object({
 		.email('The email is invalid'),
 	password: string()
 		.required('The password is required')
-		.min(5, 'The password must have at least 5 characters')
-		.max(20, 'The password must have a maximum of 20 characteres'),
-	birthday: date(),
+		.min(8, 'The password is too short - should be 8 chars minimum')
+		.matches(
+			/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,15}[^'\s]/,
+			'The password must be at least 8 characters, maximum 15, at least one uppercase letter, at' +
+				'least one lowercase letter, at least one digit, no blank spaces, at least 1 special character'
+		),
+	birthday: date().max(
+		new Date(Date.now() - 567648000000),
+		'You must be at least 18 years'
+	),
 })
 
 export = schemaUser
