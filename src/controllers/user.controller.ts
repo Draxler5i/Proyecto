@@ -4,7 +4,7 @@ import User from "../models/User"
 
 const getAllUsers = async (req:Express.Request, res:Express.Response) => {
 	try {
-		const allUsers = await User.find().populate("ticket_id", {user_id:0, __v:0})//no mostrar todos los campos
+		const allUsers = await User.find().populate("ticket_id", {user_id:0, __v:0})
 		if (allUsers.length){
 			return res.status(200).send({ status: "OK", allUsers })
 		} 
@@ -17,7 +17,8 @@ const getAllUsers = async (req:Express.Request, res:Express.Response) => {
 
 const postNewUser = async (req:Express.Request, res:Express.Response) => {
 	const {name, last_name, email, password, birthday, creditCardNumber, creditCardOwner, expirationDate, cvv, balance} = req.body
-	if(!name || !last_name || !email || !password){
+	const minimumLengthPassword = 6
+	if(!name || !last_name || !email || !password || !creditCardNumber || !expirationDate || !cvv || !balance){
 		return res.status(400).send({
 			status: "FAILED",
 			data:{
@@ -25,7 +26,7 @@ const postNewUser = async (req:Express.Request, res:Express.Response) => {
 			}
 		})
 	}
-	if(password.length < 6){
+	if(password.length < minimumLengthPassword){
 		return res.status(400).send({
 			status: "FAILED",
 			data:{
@@ -33,9 +34,18 @@ const postNewUser = async (req:Express.Request, res:Express.Response) => {
 			}
 		})
 	}
+	const existingUser = await User.findOne({ email: email })
+	if(existingUser){
+		return res.status(400).send({
+			status: "FAILED",
+			data:{
+				error: "The email address is already in use"
+			}
+		})
+	}
 	try {
 		const saltRound = 10
-		const passwordHash:any = bcrypt.hashSync(password, saltRound)
+		const passwordHash = bcrypt.hashSync(password, saltRound)
 		const newUser = new User({ name, last_name, email, password: passwordHash, birthday, creditCardNumber, creditCardOwner, expirationDate, cvv, balance })
 		await newUser.save()
 		return res.status(201).send({status: "OK", message:"User created"})
@@ -71,6 +81,15 @@ const deleteUser = async (req:Express.Request, res:Express.Response) => {
 			status: "FAILED",
 			data:{
 				error: "ID is missing or is empty"
+			}
+		})
+	}
+	const user:any = await User.findById(id)
+	if(user.ticket_id.length > 0){
+		return res.status(400).send({
+			status: "FAILED",
+			data:{
+				error: "Please delete all tickets before deleting this user"
 			}
 		})
 	}

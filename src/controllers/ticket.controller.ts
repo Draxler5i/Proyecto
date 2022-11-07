@@ -18,8 +18,9 @@ const getAllTickets = async (req:Express.Request, res:Express.Response) => {
 
 const postNewTicket = async (req:Express.Request, res:Express.Response) => {
 	const { price, currency, match_day, stadium_id, stadium_name, seat, user_id } = req.body
-
-	if(!price || !currency || !match_day || !stadium_name){
+	const maximumNumberTickets = 10
+	const ticketsSoldOut = 0
+	if(!price || !currency || !match_day || !stadium_id || !seat || !user_id){
 		return res.status(400).send({
 			status: "FAILED",
 			data:{
@@ -29,7 +30,16 @@ const postNewTicket = async (req:Express.Request, res:Express.Response) => {
 	}
 	try {
 		const user:any = await User.findById(user_id)
-		if(user.ticket_id.length === 10){
+		const stadium:any = await Stadium.findById(stadium_id)
+		if(user.balance < price){
+			return res.status(400).send({
+				status: "FAILED",
+				data:{
+					error: "We are sorry, you don't have enough funds to purchase this ticket"
+				}
+			})
+		}
+		if(user.ticket_id.length === maximumNumberTickets){
 			return res.status(400).send({
 				status: "FAILED",
 				data:{
@@ -37,19 +47,18 @@ const postNewTicket = async (req:Express.Request, res:Express.Response) => {
 				}
 			})
 		}
-		const stadium:any = await Stadium.findById(stadium_id)
-		if(stadium.ticketsAvailable == 0){
+		if(stadium.ticketsAvailable == ticketsSoldOut){
 			return res.status(400).send({
 				status: "FAILED",
 				data:{
-					error: "We are sorry there are no more tickets available at the moment"
+					error: "We are sorry, there are no more tickets available at the moment"
 				}
 			})
 		}
 		const newTicket = new Ticket({price, currency, match_day, stadium_id, stadium_name, seat, user_id: user.id
 		})
-		const datatoSave = await newTicket.save()
-		user.ticket_id = user.ticket_id.concat(datatoSave._id)
+		const dataToSave = await newTicket.save()
+		user.ticket_id = user.ticket_id.concat(dataToSave._id)
 		user.balance = user.balance - price
 		stadium.ticketsAvailable = stadium.ticketsAvailable - 1
 		await user.save()
@@ -104,8 +113,8 @@ const deleteTicket = async (req:Express.Request, res:Express.Response) => {
 		stadium.ticketsAvailable = stadium.ticketsAvailable + 1
 		await user.save()
 		await stadium.save()
-		const data = await Ticket.deleteOne({_id: id})
-		return res.status(200).send({status:"OK", data, message:`Ticket deleted with ID:${id}`})
+		const dataToSave = await Ticket.deleteOne({_id: id})
+		return res.status(200).send({status:"OK", dataToSave, message:`Ticket deleted with ID:${id}`})
 	} 
 	catch (error) {
 		res.send({ status:"FAILED", data: { error }})

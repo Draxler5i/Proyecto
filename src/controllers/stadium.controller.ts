@@ -3,7 +3,7 @@ import Stadium from "../models/Stadium"
 
 const getAllStadiums = async (req:Express.Request, res:Express.Response) => {
 	try {
-		const allStadiums = await Stadium.find()//no mostrar todos los campos
+		const allStadiums = await Stadium.find()
 		if (allStadiums.length){
 			return res.status(200).send({ status: "OK", allStadiums })
 		} 
@@ -16,6 +16,14 @@ const getAllStadiums = async (req:Express.Request, res:Express.Response) => {
 
 const postNewStadium = async (req:Express.Request, res:Express.Response) => {
 	const {name, capacity, ticketsAvailable} = req.body
+	if(!name || !capacity || !ticketsAvailable){
+		return res.status(400).send({
+			status: "FAILED",
+			data:{
+				error: "Some atributes are missing or are empty"
+			}
+		})
+	}
 	try{
 		const newStadium = new Stadium({ name, capacity, ticketsAvailable })
 		await newStadium.save()
