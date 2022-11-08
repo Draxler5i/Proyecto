@@ -17,7 +17,17 @@ app.use("/api/users", userRouter)
 app.use("/api/tickets", ticketRouter)
 app.use("/api/stadiums", stadiumRouter)
 app.use("/api/login", loginRouter)
+app.get("/api/dog", (req, res) => {
+	res.status(200).send({
+		message: "Hi!"
+	})
+})
 
-app.listen(PORT, ()=> {
+const server = app.listen(PORT, ()=> {
 	console.log(`Server on port ${PORT}`)
 })
+
+export {
+	app,
+	server
+}
