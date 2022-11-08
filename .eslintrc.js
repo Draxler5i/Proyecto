@@ -5,34 +5,41 @@ module.exports = {
         'es2021': true
     },
     'extends': [
-        'eslint:recommended',
-        'plugin:@typescript-eslint/recommended'
+        `eslint:recommended`,
+        `plugin:@typescript-eslint/recommended`
     ],
     'overrides': [
     ],
-    'parser': '@typescript-eslint/parser',
+    'parser': `@typescript-eslint/parser`,
     'parserOptions': {
-        'ecmaVersion': 'latest'
+        'ecmaVersion': `latest`
     },
     'plugins': [
-        '@typescript-eslint'
+        `@typescript-eslint`
     ],
     'rules': {
+        '@typescript-eslint/no-var-requires': 0,
         'indent': [
-            'error',
+            `error`,
             4
         ],
-        'linebreak-style': [
+        /*'indent': [
             'error',
-            'unix'
-        ],
+            'tab'
+        ],*/
+        'linebreak-style': 0,
+        /*'linebreak-style': [
+            'error',
+            'windows'
+        ],*/
         'quotes': [
-            'error',
-            'single'
+            `error`,
+            `backtick`,
+            `single`
         ],
         'semi': [
-            'error',
-            'never'
+            `error`,
+            `never`
         ]
     }
 }
