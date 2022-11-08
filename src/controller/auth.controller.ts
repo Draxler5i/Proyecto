@@ -11,7 +11,7 @@ const register = async (req: any, res: any) => {
 		req.body.user.birthday = new Date(birthday)
 		await validateUser.validate(req.body.user)
 		await validateCard.validate(req.body.card)
-		const user = await userService.existUser(req.body.email)
+		const user = await userService.existUser(req.body.user.email)
 		if (user) {
 			return res.status(400).send({
 				status: 'FAILED',

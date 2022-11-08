@@ -57,7 +57,9 @@ const postUser = async (
 			]
 		)
 		await creditCardService.postCreditCard(card, userPosted.rows[0].id_user)
-		return await client.query('COMMIT;')
+		const response = await client.query('COMMIT;')
+		response.oid = userPosted.rows[0].id_user
+		return response
 	} catch (error) {
 		await client.query('ROLLBACK;')
 		console.error(`Some wrong in postUsers service: ${error}`)

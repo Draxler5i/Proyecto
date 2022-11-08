@@ -10,8 +10,9 @@
 		"clean": "rm -rf build",
 		"start": "ts-node src/index.ts",
 		"format": "prettier --write .",
-		"lint": "eslint --fix . --ext .ts,.js",
-		"test": "jest"
+		"lint": "eslint --fix . --ext .ts,.js,.json",
+		"test": "jest --verbose --silent --detectOpenHandles",
+		"test:watch": "npm run test -- --watch"
 	},
 	"author": "Anahi Callejas",
 	"license": "ISC",
@@ -24,6 +25,7 @@
 		"@types/mongoose": "^5.3.5",
 		"@types/node": "^10.12.18",
 		"@types/pg": "^8.6.5",
+		"@types/supertest": "^2.0.12",
 		"@typescript-eslint/eslint-plugin": "^5.42.0",
 		"@typescript-eslint/parser": "^5.42.0",
 		"card-validator": "^8.1.1",
@@ -52,7 +54,13 @@
 		"pg": "^8.8.0",
 		"yup": "^0.32.11"
 	},
-	"transform": {
-		"\\.js$": "<rootDir>/node_modules/babel-jest"
+	"jest": {
+		"preset": "ts-jest",
+		"testEnvironment": "node",
+		"collectCoverage": true,
+		"coveragePathIgnorePatterns": [
+			"/node_modules/",
+			"/tests"
+		]
 	}
 }
