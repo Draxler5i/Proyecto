@@ -16,11 +16,20 @@ const getAllStadiums = async (req:Express.Request, res:Express.Response) => {
 
 const postNewStadium = async (req:Express.Request, res:Express.Response) => {
 	const {name, capacity, ticketsAvailable} = req.body
-	if(!name || !capacity || !ticketsAvailable){
+	if(!name || !ticketsAvailable){
 		return res.status(400).send({
 			status: "FAILED",
 			data:{
 				error: "Some atributes are missing or are empty"
+			}
+		})
+	}
+	const existingStadium = await Stadium.findOne({ name: name })
+	if(existingStadium){
+		return res.status(400).send({
+			status: "FAILED",
+			data:{
+				error: "The stadium you want to create, already exists"
 			}
 		})
 	}
@@ -37,17 +46,21 @@ const postNewStadium = async (req:Express.Request, res:Express.Response) => {
 const updateStadium = async (req:Express.Request, res:Express.Response) => {
 	const { id } = req.params
 	const {ticketsAvailable} = req.body
-	if(!id){
+	const existingStadium = await Stadium.findById(id)
+	if(!existingStadium){
 		return res.status(400).send({
 			status: "FAILED",
 			data:{
-				error: "ID is missing or is empty"
+				error: "The stadium you are looking for doesn't exist. Please check the id"
 			}
 		})
 	}
 	try {
-		const newData = await Stadium.updateOne({ _id:id }, { $set: {ticketsAvailable: ticketsAvailable}})
-		return res.status(200).send({status:"OK", newData, message:`Stadium updated with ID:${id}`})
+		await Stadium.findByIdAndUpdate(id, {ticketsAvailable: ticketsAvailable})
+		return res.status(200).send({
+			status:"OK", 
+			message:`Stadium updated with ID:${id}`
+		})
 	} 
 	catch (error) {
 		res.send({ status:"FAILED", data: { error }})

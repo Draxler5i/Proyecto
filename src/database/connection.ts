@@ -2,9 +2,9 @@ import mongoose from "mongoose"
 import dotenv from "dotenv"
 dotenv.config()
 
-const {MONGODB_URI} = process.env
+const {MONGODB_URI_TEST} = process.env
 
-mongoose.connect(`${MONGODB_URI}`)
+mongoose.connect(`${MONGODB_URI_TEST}`)
 
 const database = mongoose.connection
 

@@ -7,7 +7,7 @@ const StadiumSchema = new Schema({
 	},
 	capacity: {
 		type: Number,
-		required: true
+		required: false
 	},
 	ticketsAvailable:{
 		type: Number,
