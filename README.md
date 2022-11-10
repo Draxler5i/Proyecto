@@ -1,2 +1,2 @@
-*DATABASE MODEL*
+**DATABASE MODEL**
 ![model](public/model.png)
