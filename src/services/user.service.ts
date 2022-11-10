@@ -56,12 +56,9 @@ const postUser = async (
 				user.lastname,
 			]
 		)
-		const creditCardPosted = await creditCardService.postCreditCard(
-			card,
-			userPosted.rows[0].id_user
-		)
+		await creditCardService.postCreditCard(card, userPosted.rows[0].id_user)
 		const response = await client.query('COMMIT;')
-		return { response, userPosted, creditCardPosted }
+		return response
 	} catch (error) {
 		await client.query('ROLLBACK;')
 		console.error(`Some wrong in postUsers service: ${error}`)
@@ -130,7 +127,7 @@ const getTicketsPurchased = async (idUser: number) => {
 			'SELECT count(*) FROM user_ticket WHERE id_user=$1;',
 			[idUser]
 		)
-		return ticketsPurchased.rows[0]
+		return Number(ticketsPurchased.rows[0].count)
 	} catch (error) {
 		console.error(`Some wrong in getTIcketsPurchased service: ${error}`)
 		throw error

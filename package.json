@@ -52,6 +52,7 @@
 		"jsonwebtoken": "^8.5.1",
 		"mongoose": "^6.6.6",
 		"pg": "^8.8.0",
+		"ts-mockito": "^2.6.1",
 		"yup": "^0.32.11"
 	},
 	"jest": {

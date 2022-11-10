@@ -58,7 +58,6 @@ const updateTicket = async (ticket: {
 	idStadium?: number
 	state?: boolean
 }) => {
-	console.log(ticket)
 	try {
 		const ticketUpdated = await client.query(
 			'UPDATE tickets SET price=$1, currency=$2, match_day=$3, id_stadium=$4, state=$5 WHERE id_ticket=$6',
@@ -109,7 +108,7 @@ const getTicketsAvailable = async () => {
 		const ticketsAvailable = await client.query(
 			'SELECT  count(state) FROM tickets WHERE state=false;'
 		)
-		return ticketsAvailable.rows[0]
+		return Number(ticketsAvailable.rows[0].count)
 	} catch (error) {
 		console.error(`Some wrong in getTicketsAvailable service: ${error}`)
 		throw error

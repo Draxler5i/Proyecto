@@ -1,17 +1,10 @@
 import request from 'supertest'
 import app from '../../src/index'
 
-jest.mock('../../src/services/user.service')
-
 describe('Auth methods: login and register an user', () => {
-	afterAll(() => {
-		jest.resetAllMocks()
-	})
-
 	it("A user's registration (POST) code status must be 201", async () => {
-		const response = await request(app)
-			.post('/auth/register')
-			.send({
+		try {
+			const USER = {
 				user: {
 					name: 'Flor',
 					lastname: 'Rosas',
@@ -27,8 +20,12 @@ describe('Auth methods: login and register an user', () => {
 					balance: 1500,
 					cvv: '220',
 				},
-			})
-		expect(response.status).toEqual(201)
+			}
+			const response = await request(app).post('/auth/register').send(USER)
+			expect(response.status).toEqual(201)
+		} catch (error) {
+			console.log(error)
+		}
 	})
 
 	it("A user's login (POST) code status must be 200", async () => {
@@ -36,7 +33,7 @@ describe('Auth methods: login and register an user', () => {
 			email: 'anahi1@admin.com',
 			password: 'Admin123*',
 		})
-		expect(response.body.token?.length).toBeGreaterThan(0)
+		expect(response.body.token).toBeDefined()
 		expect(response.status).toEqual(200)
 	})
 })

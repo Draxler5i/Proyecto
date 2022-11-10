@@ -87,12 +87,12 @@ const updateBalanceCreditCard = async (balance: number, id: number) => {
 
 const deleteCreditCard = async (id: number) => {
 	try {
-		const creditCardDeleted = await client.query(
-			'DELETE FROM creditcard WHERE id_user=$1',
-			[id]
-		)
-		return creditCardDeleted
+		await client.query('BEGIN;')
+		await client.query('DELETE FROM creditcard WHERE id_user=$1', [id])
+		await client.query('DELETE FROM users WHERE id_user=$1', [id])
+		return await client.query('COMMIT;')
 	} catch (error) {
+		await client.query('ROLLBACK;')
 		console.error(`Some wrong in deleteCreditCard service: ${error}`)
 		throw error
 	}

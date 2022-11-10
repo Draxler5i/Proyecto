@@ -1,56 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1668023739548" clover="3.2.0">
-  <project timestamp="1668023739548" name="All files">
-    <metrics statements="38" coveredstatements="15" conditionals="0" coveredconditionals="0" methods="10" coveredmethods="2" elements="48" coveredelements="17" complexity="0" loc="38" ncloc="38" packages="2" files="2" classes="2"/>
-    <package name="database">
-      <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
-      <file name="conection.ts" path="/home/anahi/AssureSoft/softwareDevelopmentFundamentals/practice/src/database/conection.ts">
-        <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
-        <line num="1" count="1" type="stmt"/>
-        <line num="2" count="1" type="stmt"/>
-        <line num="4" count="1" type="stmt"/>
-        <line num="6" count="1" type="stmt"/>
-        <line num="13" count="1" type="stmt"/>
-      </file>
-    </package>
-    <package name="services">
-      <metrics statements="33" coveredstatements="10" conditionals="0" coveredconditionals="0" methods="10" coveredmethods="2"/>
-      <file name="creditCard.service.ts" path="/home/anahi/AssureSoft/softwareDevelopmentFundamentals/practice/src/services/creditCard.service.ts">
-        <metrics statements="33" coveredstatements="10" conditionals="0" coveredconditionals="0" methods="10" coveredmethods="2"/>
-        <line num="1" count="1" type="stmt"/>
-        <line num="3" count="1" type="stmt"/>
-        <line num="4" count="1" type="stmt"/>
-        <line num="5" count="1" type="stmt"/>
-        <line num="9" count="1" type="stmt"/>
-        <line num="11" count="0" type="stmt"/>
-        <line num="12" count="0" type="stmt"/>
-        <line num="16" count="1" type="stmt"/>
-        <line num="26" count="0" type="stmt"/>
-        <line num="27" count="0" type="stmt"/>
-        <line num="28" count="0" type="stmt"/>
-        <line num="41" count="0" type="stmt"/>
-        <line num="42" count="0" type="stmt"/>
-        <line num="46" count="1" type="stmt"/>
-        <line num="55" count="0" type="stmt"/>
-        <line num="56" count="0" type="stmt"/>
-        <line num="57" count="0" type="stmt"/>
-        <line num="68" count="0" type="stmt"/>
-        <line num="70" count="0" type="stmt"/>
-        <line num="71" count="0" type="stmt"/>
-        <line num="75" count="1" type="stmt"/>
-        <line num="76" count="0" type="stmt"/>
-        <line num="77" count="0" type="stmt"/>
-        <line num="81" count="0" type="stmt"/>
-        <line num="83" count="0" type="stmt"/>
-        <line num="84" count="0" type="stmt"/>
-        <line num="88" count="1" type="stmt"/>
-        <line num="89" count="0" type="stmt"/>
-        <line num="90" count="0" type="stmt"/>
-        <line num="94" count="0" type="stmt"/>
-        <line num="96" count="0" type="stmt"/>
-        <line num="97" count="0" type="stmt"/>
-        <line num="101" count="1" type="stmt"/>
-      </file>
-    </package>
+<coverage generated="1668116064189" clover="3.2.0">
+  <project timestamp="1668116064189" name="All files">
+    <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0" elements="3" coveredelements="3" complexity="0" loc="3" ncloc="3" packages="1" files="1" classes="1"/>
+    <file name="user.validation.ts" path="/home/anahi/AssureSoft/softwareDevelopmentFundamentals/practice/src/validations/user.validation.ts">
+      <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <line num="1" count="1" type="stmt"/>
+      <line num="3" count="1" type="stmt"/>
+      <line num="33" count="1" type="stmt"/>
+    </file>
   </project>
 </coverage>
