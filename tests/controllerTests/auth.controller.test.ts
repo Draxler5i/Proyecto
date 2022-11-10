@@ -1,6 +1,5 @@
 import request from 'supertest'
 import app from '../../src/index'
-import userService = require('../../src/services/user.service')
 
 jest.mock('../../src/services/user.service')
 
@@ -10,7 +9,6 @@ describe('Auth methods: login and register an user', () => {
 	})
 
 	it("A user's registration (POST) code status must be 201", async () => {
-		userService.mockReturnValueOnce()
 		const response = await request(app)
 			.post('/auth/register')
 			.send({
