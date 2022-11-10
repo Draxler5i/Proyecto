@@ -2,7 +2,6 @@ const sellService = require('../services/sell.service')
 const { Router } = require('express')
 
 const route = Router()
-
 route
     .get('/', sellService.getSells)
     .post('/', sellService.createSell)

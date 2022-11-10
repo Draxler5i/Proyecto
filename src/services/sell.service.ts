@@ -125,7 +125,7 @@ const createSell = async (request: Express.Request, response: Express.Response) 
     if (total >= 10) return response.send(`Quantity of tickets must not surpass 10.`)
     if (disponibleTicket) return response.send(`There are no enough tickets for the purchase.`)
     try {
-        await client.query(`BEGIN`)
+        //await client.query(`BEGIN`)
         await client.query(`INSERT INTO public.sells ( user_id, sell_date ) VALUES ($1, $2) RETURNING *`,
             [user_id, sell_date], async (error: Error, results: typeof QueryResult) => {
                 if (error) {
@@ -168,9 +168,9 @@ const createSell = async (request: Express.Request, response: Express.Response) 
                 }
                 response.status(201).send(`Sell added with sell date: ${results.rows[0].sell_date}}`)
             })
-        return await client.query(`COMMIT;`)
+        //return await client.query(`COMMIT;`)
     } catch (e) {
-        await client.query(`ROLLBACK;`)
+        //await client.query(`ROLLBACK;`)
         console.log(e)
         throw (e)
     }

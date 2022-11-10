@@ -1,5 +1,3 @@
-import { doesNotReject } from "assert"
-
 const supertest = require('supertest')
 const app = require('../index')
 const api = supertest(app)
