@@ -7,7 +7,7 @@ const getTicket = async (_req: Express.Request, res: Express.Response) => {
             if (error) {
                 return res.status(400).send(errors.ERROR_GET('tickets'))
             }
-            return res.status(200).json(result[`rows`])
+            return res.status(200).json(result.rows)
         })
     } catch (e) {
         console.log(e)
