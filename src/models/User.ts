@@ -3,7 +3,7 @@ import { Schema, model } from "mongoose"
 const UserSchema = new Schema({
 	name: {
 		type: String,
-		required: true
+		required: true,
 	},
 	last_name: {
 		type: String,
@@ -23,7 +23,7 @@ const UserSchema = new Schema({
 	},
 	ticket_id: {
 		type: [{ type: Schema.Types.ObjectId, ref: "Ticket" }],
-		required: true
+		required: false
 	},
 	creditCardNumber:{
 		type: String,

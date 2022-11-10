@@ -70,7 +70,7 @@ describe("modify a stadium", () => {
 		const updateStadium = {
 			ticketsAvailable: 20
 		}
-		const fakeId = "636a824497bb882607b44872"
+		const fakeId = "636a824497bb882607b4487d"
 		await api
 			.put(`/api/stadiums/${fakeId}`)
 			.send(updateStadium)

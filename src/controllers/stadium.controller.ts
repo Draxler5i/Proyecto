@@ -56,9 +56,10 @@ const updateStadium = async (req:Express.Request, res:Express.Response) => {
 		})
 	}
 	try {
-		await Stadium.findByIdAndUpdate(id, {ticketsAvailable: ticketsAvailable})
+		const updatedData = await Stadium.findByIdAndUpdate(id, {ticketsAvailable: ticketsAvailable}, {new: true})
 		return res.status(200).send({
-			status:"OK", 
+			status:"OK",
+			updatedData: updatedData,
 			message:`Stadium updated with ID:${id}`
 		})
 	} 

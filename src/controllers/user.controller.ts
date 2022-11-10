@@ -18,7 +18,7 @@ const getAllUsers = async (req:Express.Request, res:Express.Response) => {
 const postNewUser = async (req:Express.Request, res:Express.Response) => {
 	const {name, last_name, email, password, birthday, creditCardNumber, creditCardOwner, expirationDate, cvv, balance} = req.body
 	const minimumLengthPassword = 6
-	if(!name || !last_name || !email || !password || !creditCardNumber || !expirationDate || !cvv || !balance){
+	if(!name || !last_name || !email || !password || !creditCardNumber || !creditCardOwner || !expirationDate || !cvv || !balance){
 		return res.status(400).send({
 			status: "FAILED",
 			data:{
@@ -57,16 +57,17 @@ const postNewUser = async (req:Express.Request, res:Express.Response) => {
 
 const updateUser = async (req:Express.Request, res:Express.Response) => {
 	const { id } = req.params
-	if(!id){
+	const existingUser = await User.findById(id)
+	if(!existingUser){
 		return res.status(400).send({
 			status: "FAILED",
 			data:{
-				error: "ID is missing or is empty"
+				error: "The user you are looking for doesn't exist. Please check the id"
 			}
 		})
 	}
 	try {
-		const newData = await User.updateOne({ _id:id }, { $set: req.body})
+		const newData = await User.findByIdAndUpdate(id, { $set: req.body }, {new: true})
 		return res.status(200).send({status:"OK", newData, message:`User updated with ID:${id}`})
 	} 
 	catch (error) {
@@ -76,11 +77,12 @@ const updateUser = async (req:Express.Request, res:Express.Response) => {
 
 const deleteUser = async (req:Express.Request, res:Express.Response) => {
 	const { id } = req.params
-	if(!id){
+	const existingUser = await User.findById(id)
+	if(!existingUser){
 		return res.status(400).send({
 			status: "FAILED",
 			data:{
-				error: "ID is missing or is empty"
+				error: "The user you are looking for doesn't exist. Please check the id"
 			}
 		})
 	}
@@ -94,7 +96,7 @@ const deleteUser = async (req:Express.Request, res:Express.Response) => {
 		})
 	}
 	try {
-		const removedData = await User.deleteOne({_id: id})
+		const removedData = await User.findByIdAndDelete(id)
 		return res.status(200).send({status:"OK", removedData, message:`User deleted with ID:${id}`})
 	} 
 	catch (error) {
