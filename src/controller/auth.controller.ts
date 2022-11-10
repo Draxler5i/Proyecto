@@ -1,5 +1,5 @@
 import userService from '../services/user.service'
-import encryptor from '../security/encryp'
+import encryptor from '../security/encrypt'
 import validateUser from '../validations/user.validation'
 import validateCard from '../validations/creditCard.validation'
 import validateCredential from '../validations/credential.validation'

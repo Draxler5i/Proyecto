@@ -1,28 +1,26 @@
 import request from 'supertest'
-import app from '../src/index'
+import app from '../../src/index'
+import userService = require('../../src/services/user.service')
+
+jest.mock('../../src/services/user.service')
 
 describe('Auth methods: login and register an user', () => {
-	let id: any
-	afterAll(async () => {
-		console.log(id)
-		await request(app)
-			.delete(`/api/users/${id}`)
-			.set(
-				'auth-token',
-				'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhbmFoaTFAYWRtaW4uY29tIiwiaWF0IjoxNjY3OTQyMjkyfQ.5eDIGLdczz3ceDGrLzLSacv4-nKZujUittOrg-6XkuA"'
-			)
+	afterAll(() => {
+		jest.resetAllMocks()
 	})
+
 	it("A user's registration (POST) code status must be 201", async () => {
+		userService.mockReturnValueOnce()
 		const response = await request(app)
 			.post('/auth/register')
 			.send({
 				user: {
-					name: 'John',
-					lastname: 'Smith',
-					age: 22,
-					email: 'john@admin.com',
-					password: 'Admin456*',
-					birthday: '2000/01/31',
+					name: 'Flor',
+					lastname: 'Rosas',
+					age: 25,
+					email: 'flor@gmail.com',
+					password: 'Florr456*',
+					birthday: '1997/05/11',
 				},
 				card: {
 					name_card: 'visa',
@@ -32,9 +30,7 @@ describe('Auth methods: login and register an user', () => {
 					cvv: '220',
 				},
 			})
-		console.log(response)
 		expect(response.status).toEqual(201)
-		id = response.body.oid
 	})
 
 	it("A user's login (POST) code status must be 200", async () => {

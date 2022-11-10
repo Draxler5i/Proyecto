@@ -54,7 +54,7 @@ const ticketRefund = async (req: any, res: any) => {
 	if (!idUser || !idTicket) res.status(400).send(MESSAGE_ERROR)
 	try {
 		const refundPosted = await saleService.postRefund(idUser, idTicket)
-		res.status(201).send({
+		res.status(200).send({
 			status: 'OK',
 			data: refundPosted,
 			message: 'Refunded Ticket',

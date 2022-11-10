@@ -56,10 +56,12 @@ const postUser = async (
 				user.lastname,
 			]
 		)
-		await creditCardService.postCreditCard(card, userPosted.rows[0].id_user)
+		const creditCardPosted = await creditCardService.postCreditCard(
+			card,
+			userPosted.rows[0].id_user
+		)
 		const response = await client.query('COMMIT;')
-		response.oid = userPosted.rows[0].id_user
-		return response
+		return { response, userPosted, creditCardPosted }
 	} catch (error) {
 		await client.query('ROLLBACK;')
 		console.error(`Some wrong in postUsers service: ${error}`)
@@ -98,12 +100,12 @@ const updateUser = async (user: {
 
 const deleteUser = async (id: number) => {
 	try {
-		const userDeleted = await client.query(
-			'DELETE FROM users WHERE id_user = $1;',
-			[id]
-		)
-		return userDeleted
+		await client.query('BEGIN;')
+		await client.query('DELETE FROM creditcard WHERE id_user = $1;', [id])
+		await client.query('DELETE FROM users WHERE id_user = $1;', [id])
+		return await client.query('COMMIT;')
 	} catch (error) {
+		await client.query('ROLLBACK;')
 		console.error(`Some wrong in deleteUsers service: ${error}`)
 		throw error
 	}

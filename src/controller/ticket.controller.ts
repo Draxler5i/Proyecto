@@ -9,7 +9,7 @@ const MESSAGE_ERROR = {
 const getAllTickets = async (req: any, res: any) => {
 	try {
 		const tickets = await ticketService.getTickets()
-		res.send({ status: 'OK', data: tickets })
+		res.status(200).send({ status: 'OK', data: tickets })
 	} catch (error) {
 		console.error(`Some wrong in getAllTickets controller: ${error}`)
 		res.send({ status: 'FAILED', data: { error } })
@@ -21,7 +21,7 @@ const getTicket = async (req: any, res: any) => {
 	if (!id) res.status(400).send(MESSAGE_ERROR)
 	try {
 		const ticket = await ticketService.getOneTicket(id)
-		res.send({ status: 'OK', data: ticket })
+		res.status(200).send({ status: 'OK', data: ticket })
 	} catch (error) {
 		console.error(`Some wrong in getTicket controller: ${error}`)
 		res.send({ status: 'FAILED', data: { error } })
