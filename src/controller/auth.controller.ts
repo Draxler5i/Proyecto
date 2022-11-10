@@ -9,10 +9,10 @@ const register = async (req: any, res: any) => {
 	const { password, birthday } = req.body.user
 	try {
 		req.body.user.birthday = new Date(birthday)
-		await validateUser.validate(req.body.user)
-		await validateCard.validate(req.body.card)
+		const isUserValid = await validateUser.isValid(req.body.user)
+		const isCardValid = await validateCard.isValid(req.body.card)
 		const user = await userService.existUser(req.body.user.email)
-		if (user) {
+		if (user && !isUserValid && !isCardValid) {
 			return res.status(400).send({
 				status: 'FAILED',
 				data: {

@@ -14,12 +14,13 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
 app.use('/auth', authRouter)
-app.use('/api/users', verifyToken, userRouter)
+app.use('/api/users', userRouter)
 app.use('/api/tickets', verifyToken, ticketRouter)
 app.use('/api/sales', verifyToken, saleRouter)
 
-app.listen(PORT, () => {
-	console.log('Server on port', PORT)
-})
+export default app;
 
-export = app
+// app.listen(PORT, () => {
+// 	console.log('Server on port', PORT)
+// })
+
