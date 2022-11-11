@@ -15,9 +15,8 @@ const ticketSale = async (req: any, res: any) => {
 	const { idUser, idTicket } = req.body
 	if (!idUser || !idTicket) res.status(400).send(MESSAGE_ERROR)
 	try {
-		const amountTicketsPurchased = await userService.getTicketsPurchased(
-			idUser
-		)
+		const amountTicketsPurchased =
+			await userService.getAmountTicketsPurchased(idUser)
 		if (amountTicketsPurchased >= TICKETS_ALLOWED_PURCHASE) {
 			res.status(400).send({
 				status: 'FAILED',
@@ -25,14 +24,14 @@ const ticketSale = async (req: any, res: any) => {
 					'The number of tickets available for purchase by a user has been exceeded',
 			})
 		}
-		const ticketsAvailable = await ticketService.getTicketsAvailable()
+		const ticketsAvailable = await ticketService.getAmountTicketsAvailable()
 		if (ticketsAvailable === ZERO_TICKETS) {
 			res.status(400).send({
 				status: 'FAILED',
 				message: 'No tickets available for sale',
 			})
 		}
-		const creditCard = await creditCardService.getCreditCard(idUser)
+		const creditCard = await creditCardService.getCreditCardById(idUser)
 		await validateCreditCard.validate(creditCard)
 		const salePosted = await saleService.postSale(
 			req.body.idUser,
@@ -61,7 +60,7 @@ const ticketRefund = async (req: any, res: any) => {
 		})
 	} catch (error) {
 		console.error(`Some wrong in ticketRefund controller: ${error}`)
-		throw error
+		res.send({ status: 'FAILED', data: { error } })
 	}
 }
 

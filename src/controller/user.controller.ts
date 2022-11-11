@@ -15,11 +15,11 @@ const getAllUsers = async (req: any, res: any) => {
 	}
 }
 
-const getUser = async (req: any, res: any) => {
+const getUserById = async (req: any, res: any) => {
 	const id = parseInt(req.params.id)
 	if (!id) res.status(400).send(MESSAGE_ERROR)
 	try {
-		const user = await userService.getOneUser(id)
+		const user = await userService.getOneUserById(id)
 		res.status(200).send({ status: 'OK', data: user })
 	} catch (error) {
 		console.error(`Some wrong in getUser controller: ${error}`)
@@ -27,12 +27,12 @@ const getUser = async (req: any, res: any) => {
 	}
 }
 
-const updateUser = async (req: any, res: any) => {
+const updateUserById = async (req: any, res: any) => {
 	const id = parseInt(req.params.id)
 	if (!id) res.status(400).send(MESSAGE_ERROR)
 	req.body.id = id
 	try {
-		const userUpdated = await userService.updateUser(req.body)
+		const userUpdated = await userService.updateUserById(req.body)
 		res.status(200).send({
 			status: 'OK',
 			data: userUpdated,
@@ -44,11 +44,11 @@ const updateUser = async (req: any, res: any) => {
 	}
 }
 
-const deleteUser = async (req: any, res: any) => {
+const deleteUserById = async (req: any, res: any) => {
 	const id = parseInt(req.params.id)
 	if (!id) res.status(400).send(MESSAGE_ERROR)
 	try {
-		const userDeleted = await userService.deleteUser(id)
+		const userDeleted = await userService.deleteUserById(id)
 		res.status(200).send({
 			status: 'OK',
 			data: userDeleted,
@@ -62,7 +62,7 @@ const deleteUser = async (req: any, res: any) => {
 
 export = {
 	getAllUsers,
-	getUser,
-	updateUser,
-	deleteUser,
+	getUserById,
+	updateUserById,
+	deleteUserById,
 }

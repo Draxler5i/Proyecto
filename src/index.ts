@@ -5,6 +5,7 @@ import ticketRouter from './routes/ticket.routes'
 import verifyToken from './middlewares/verifyToken'
 import authRouter from './routes/auth.router'
 import saleRouter from './routes/sale.router'
+import stadiumRouter from './routes/stadium.router'
 
 dotenv.config()
 const app = express()
@@ -17,6 +18,7 @@ app.use('/auth', authRouter)
 app.use('/api/users', verifyToken, userRouter)
 app.use('/api/tickets', verifyToken, ticketRouter)
 app.use('/api/sales', verifyToken, saleRouter)
+app.use('/api/stadiums', verifyToken, stadiumRouter)
 
 app.listen(PORT, () => {
 	console.log('Server on port', PORT)

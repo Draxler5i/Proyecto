@@ -1,6 +1,6 @@
 import client from '../database/conection'
 
-const getCreditCard = async (idUser: number) => {
+const getCreditCardById = async (idUser: number) => {
 	try {
 		const creditCard = await client.query(
 			'SELECT * FROM creditcard WHERE id_user=$1;',
@@ -43,7 +43,7 @@ const postCreditCard = async (
 	}
 }
 
-const updateCreditCard = async (
+const updateCreditCardById = async (
 	card: {
 		name_card?: string
 		expiration?: string
@@ -85,7 +85,7 @@ const updateBalanceCreditCard = async (balance: number, id: number) => {
 	}
 }
 
-const deleteCreditCard = async (id: number) => {
+const deleteCreditCardById = async (id: number) => {
 	try {
 		await client.query('BEGIN;')
 		await client.query('DELETE FROM creditcard WHERE id_user=$1', [id])
@@ -99,9 +99,9 @@ const deleteCreditCard = async (id: number) => {
 }
 
 export = {
-	updateCreditCard,
-	getCreditCard,
-	deleteCreditCard,
+	updateCreditCardById,
+	getCreditCardById,
+	deleteCreditCardById,
 	postCreditCard,
 	updateBalanceCreditCard,
 }

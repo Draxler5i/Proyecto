@@ -10,7 +10,7 @@ const getTickets = async () => {
 	}
 }
 
-const getOneTicket = async (id: number) => {
+const getOneTicketById = async (id: number) => {
 	try {
 		const ticket = await client.query(
 			'SELECT * FROM tickets WHERE id_ticket=$1;',
@@ -50,7 +50,7 @@ const postTicket = async (ticket: {
 	}
 }
 
-const updateTicket = async (ticket: {
+const updateTicketById = async (ticket: {
 	price?: number
 	currency?: string
 	matchDay?: Date
@@ -90,7 +90,7 @@ const updateTicketState = async (ticket: { id: number; state: boolean }) => {
 	}
 }
 
-const deleteTicket = async (id: number) => {
+const deleteTicketById = async (id: number) => {
 	try {
 		const ticketDeleted = client.query(
 			'DELETE FROM tickets WHERE id_ticket=$1',
@@ -103,7 +103,7 @@ const deleteTicket = async (id: number) => {
 	}
 }
 
-const getTicketsAvailable = async () => {
+const getAmountTicketsAvailable = async () => {
 	try {
 		const ticketsAvailable = await client.query(
 			'SELECT  count(state) FROM tickets WHERE state=false;'
@@ -117,10 +117,10 @@ const getTicketsAvailable = async () => {
 
 export = {
 	getTickets,
-	getOneTicket,
+	getOneTicketById,
 	postTicket,
-	updateTicket,
-	deleteTicket,
-	getTicketsAvailable,
+	updateTicketById,
+	deleteTicketById,
+	getAmountTicketsAvailable,
 	updateTicketState,
 }

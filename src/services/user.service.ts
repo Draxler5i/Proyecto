@@ -11,7 +11,7 @@ const getUsers = async () => {
 	}
 }
 
-const getOneUser = async (id: number) => {
+const getOneUserById = async (id: number) => {
 	try {
 		const user = await client.query('SELECT * FROM users WHERE id_user=$1;', [
 			id,
@@ -66,7 +66,7 @@ const postUser = async (
 	}
 }
 
-const updateUser = async (user: {
+const updateUserById = async (user: {
 	name?: string
 	age?: number
 	email?: string
@@ -95,7 +95,7 @@ const updateUser = async (user: {
 	}
 }
 
-const deleteUser = async (id: number) => {
+const deleteUserById = async (id: number) => {
 	try {
 		await client.query('BEGIN;')
 		await client.query('DELETE FROM creditcard WHERE id_user = $1;', [id])
@@ -121,7 +121,7 @@ const existUser = async (email: string) => {
 	}
 }
 
-const getTicketsPurchased = async (idUser: number) => {
+const getAmountTicketsPurchased = async (idUser: number) => {
 	try {
 		const ticketsPurchased = await client.query(
 			'SELECT count(*) FROM user_ticket WHERE id_user=$1;',
@@ -136,10 +136,10 @@ const getTicketsPurchased = async (idUser: number) => {
 
 export = {
 	getUsers,
-	getOneUser,
+	getOneUserById,
 	postUser,
-	updateUser,
-	deleteUser,
+	updateUserById,
+	deleteUserById,
 	existUser,
-	getTicketsPurchased,
+	getAmountTicketsPurchased,
 }

@@ -16,11 +16,11 @@ const getAllTickets = async (req: any, res: any) => {
 	}
 }
 
-const getTicket = async (req: any, res: any) => {
+const getTicketById = async (req: any, res: any) => {
 	const id = parseInt(req.params.id)
 	if (!id) res.status(400).send(MESSAGE_ERROR)
 	try {
-		const ticket = await ticketService.getOneTicket(id)
+		const ticket = await ticketService.getOneTicketById(id)
 		res.status(200).send({ status: 'OK', data: ticket })
 	} catch (error) {
 		console.error(`Some wrong in getTicket controller: ${error}`)
@@ -46,12 +46,12 @@ const postNewTicket = async (req: any, res: any) => {
 	}
 }
 
-const updateTicket = async (req: any, res: any) => {
+const updateTicketById = async (req: any, res: any) => {
 	const id = parseInt(req.params.id)
 	if (!id) res.status(400).send(MESSAGE_ERROR)
 	req.body.id = id
 	try {
-		const ticketUpdated = await ticketService.updateTicket(req.body)
+		const ticketUpdated = await ticketService.updateTicketById(req.body)
 		res.status(200).send({
 			status: 'OK',
 			data: ticketUpdated,
@@ -63,11 +63,11 @@ const updateTicket = async (req: any, res: any) => {
 	}
 }
 
-const deleteTicket = async (req: any, res: any) => {
+const deleteTicketById = async (req: any, res: any) => {
 	const id = parseInt(req.params.id)
 	if (!id) res.status(400).send(MESSAGE_ERROR)
 	try {
-		const ticketDeleted = await ticketService.deleteTicket(id)
+		const ticketDeleted = await ticketService.deleteTicketById(id)
 		res.status(200).send({
 			status: 'OK',
 			data: ticketDeleted,
@@ -81,8 +81,8 @@ const deleteTicket = async (req: any, res: any) => {
 
 export = {
 	getAllTickets,
-	getTicket,
+	getTicketById,
 	postNewTicket,
-	updateTicket,
-	deleteTicket,
+	updateTicketById,
+	deleteTicketById,
 }

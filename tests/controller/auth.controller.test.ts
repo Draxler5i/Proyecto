@@ -26,7 +26,7 @@ describe('Auth methods: login and register an user', () => {
 
 	it("A user's login (POST) code status must be 200", async () => {
 		const response = await request(app).post('/auth/login').send({
-			email: 'anahi1@admin.com',
+			email: 'anahi@admin.com',
 			password: 'Admin123*',
 		})
 		expect(response.body.token).toBeDefined()
