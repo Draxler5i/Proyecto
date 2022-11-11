@@ -5,8 +5,8 @@ const router = Router()
 
 router
 	.get('/', userController.getAllUsers)
-	.get('/:id', userController.getUser)
-	.put('/:id', userController.updateUser)
-	.delete('/:id', userController.deleteUser)
+	.get('/:id', userController.getUserById)
+	.put('/:id', userController.updateUserById)
+	.delete('/:id', userController.deleteUserById)
 
 export = router

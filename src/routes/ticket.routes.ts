@@ -7,7 +7,7 @@ router
 	.get('/', ticketController.getAllTickets)
 	.get('/:id', ticketController.getAllTickets)
 	.post('/', ticketController.postNewTicket)
-	.put('/:id', ticketController.updateTicket)
-	.delete('/:id', ticketController.deleteTicket)
+	.put('/:id', ticketController.updateTicketById)
+	.delete('/:id', ticketController.deleteTicketById)
 
 export = router
