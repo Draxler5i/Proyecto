@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">24.59% </span>
+                <span class="strong">16.39% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>15/61</span>
+                <span class='fraction'>10/61</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>0/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">14.28% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>2/14</span>
+                <span class='fraction'>0/14</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">23.63% </span>
+                <span class="strong">18.18% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>13/55</span>
+                <span class='fraction'>10/55</span>
             </div>
         
             
@@ -208,10 +208,7 @@
 <a name='L143'></a><a href='#L143'>143</a>
 <a name='L144'></a><a href='#L144'>144</a>
 <a name='L145'></a><a href='#L145'>145</a>
-<a name='L146'></a><a href='#L146'>146</a>
-<a name='L147'></a><a href='#L147'>147</a>
-<a name='L148'></a><a href='#L148'>148</a>
-<a name='L149'></a><a href='#L149'>149</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L146'></a><a href='#L146'>146</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -270,9 +267,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -325,11 +319,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -417,12 +411,9 @@ const postUser = <span class="fstat-no" title="function not covered" >async (</s
 				user.lastname,
 			]
 		)
-		const creditCardPosted = <span class="cstat-no" title="statement not covered" >await creditCardService.postCreditCard(</span>
-			card,
-			userPosted.rows[0].id_user
-		)
+<span class="cstat-no" title="statement not covered" >		await creditCardService.postCreditCard(card, userPosted.rows[0].id_user)</span>
 		const response = <span class="cstat-no" title="statement not covered" >await client.query('COMMIT;')</span>
-<span class="cstat-no" title="statement not covered" >		return { response, userPosted, creditCardPosted }</span>
+<span class="cstat-no" title="statement not covered" >		return response</span>
 	} catch (error) {
 <span class="cstat-no" title="statement not covered" >		await client.query('ROLLBACK;')</span>
 <span class="cstat-no" title="statement not covered" >		console.error(`Some wrong in postUsers service: ${error}`)</span>
@@ -472,12 +463,12 @@ const deleteUser = <span class="fstat-no" title="function not covered" >async (i
 	}
 }
 &nbsp;
-const existUser = async (email: string) =&gt; {
-	try {
-		const user = await client.query('SELECT * FROM users WHERE email = $1;', [
+const existUser = <span class="fstat-no" title="function not covered" >async (e</span>mail: string) =&gt;<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" > {</span></span>
+<span class="cstat-no" title="statement not covered" >	try {</span>
+		const user = <span class="cstat-no" title="statement not covered" >await client.query('SELECT * FROM users WHERE email = $1;', [</span>
 			email,
 		])
-		if (user.rows.length &gt; 0) return user.rows
+<span class="cstat-no" title="statement not covered" >		<span class="missing-if-branch" title="if path not taken" >I</span>if (user.rows.length &gt; 0) <span class="cstat-no" title="statement not covered" >return user.rows</span></span>
 <span class="cstat-no" title="statement not covered" >		return null</span>
 	} catch (error) {
 <span class="cstat-no" title="statement not covered" >		console.error(`Some wrong in existUser service: ${error}`)</span>
@@ -491,7 +482,7 @@ const getTicketsPurchased = <span class="fstat-no" title="function not covered" 
 			'SELECT count(*) FROM user_ticket WHERE id_user=$1;',
 			[idUser]
 		)
-<span class="cstat-no" title="statement not covered" >		return ticketsPurchased.rows[0]</span>
+<span class="cstat-no" title="statement not covered" >		return Number(ticketsPurchased.rows[0].count)</span>
 	} catch (error) {
 <span class="cstat-no" title="statement not covered" >		console.error(`Some wrong in getTIcketsPurchased service: ${error}`)</span>
 <span class="cstat-no" title="statement not covered" >		throw error</span>
@@ -514,7 +505,7 @@ export = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2022-11-10T18:45:09.374Z
+                at 2022-11-11T01:31:45.391Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
