@@ -35,8 +35,7 @@ const updateStadium = async (req: Express.Request, res: Express.Response) => {
         return res.status(400).send(errors.ERROR_VARIABLE)
     }
     try {
-        const stadium = await client.query(`select * from public.stadium where stadium_id = $1`,
-            [id])
+        const stadium = await client.query(`select * from public.stadium where stadium_id = $1`, [id])
         if (stadium.rowCount == 0) {
             return res.status(400).send(UPDATE_STADIUM_ERROR)
         }

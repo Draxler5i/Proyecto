@@ -3,33 +3,22 @@ const client = require(`../postgres/connection`)
 const errors = require(`./errorMessages/errors`)
 const getTicket = async (_req: Express.Request, res: Express.Response) => {
     try {
-        await client.query(`SELECT * from ticket`, (error: Error, result: typeof QueryResult) => {
-            if (error) {
-                return res.status(400).send(errors.ERROR_GET('tickets'))
-            }
-            return res.status(200).json(result.rows)
-        })
+        const tickets = await client.query(`SELECT * from ticket`)
+        return res.status(200).json(tickets.rows)
     } catch (e) {
         console.log(e)
-        return res.send(errors.throw_error(e))
+        return res.status(400).send(errors.throw_error(errors.ERROR_GET('tickets')))
     }
 }
 const getNumberOfTickets = (ticket_id: number, quantity: number): boolean => {
     try {
-        client.query(`select quantity from ticket where ticket_id=$1`, [ticket_id],
-            (error: Error, results: typeof QueryResult) => {
-                if (error) {
-                    console.log(error)
-                    return error
-                }
-                if (results.rows[0].quantity >= quantity) return true
-                return false
-            })
+        const tickets = client.query(`select quantity from ticket where ticket_id=$1`, [ticket_id])
+        if (tickets.rows[0].quantity >= quantity) return true
+        return false
     } catch (e) {
         console.log(e)
         throw e
     }
-    return false
 }
 const createTicket = async (req: Express.Request, res: Express.Response) => {
     const { price, currency, match_day, stadium_id, type, quantity } = req.body
@@ -52,7 +41,7 @@ const createTicket = async (req: Express.Request, res: Express.Response) => {
             })
     } catch (e) {
         console.log(e)
-        return res.send(errors.throw_error(e))
+        return res.status(400).send(errors.throw_error(e))
     }
 }
 const updateTicket = async (req: Express.Request, res: Express.Response) => {
@@ -63,55 +52,35 @@ const updateTicket = async (req: Express.Request, res: Express.Response) => {
         return res.status(400).send(errors.ERROR_VARIABLE)
     }
     try {
-        await client.query(`select * from ticket where ticket_id = $1`,
-            [id], async (error: Error, results: typeof QueryResult) => {
-                if (error) {
-                    return res.status(400).send(UPDATE_ERROR)
-                }
-                if (results.rowCount == 0) {
-                    return res.status(400).send(UPDATE_ERROR)
-                }
-                await client.query(`UPDATE ticket SET price = $1, match_day = $2, 
-                quantity = $3 WHERE ticket_id = $4 RETURNING *`,
-                    [price, match_day, quantity, id],
-                    (error: Error, results: typeof QueryResult) => {
-                        if (error) {
-                            return res.status(400).send(UPDATE_ERROR)
-                        }
-                        return res.status(200).send(`Ticket modified with price: ${results.rows[0].price}, 
-                        match_day: ${results.rows[0].match_day}, quantity: ${results.rows[0].quantity}`)
-                    })
-            })
+        const number_ticket = await client.query(`select * from ticket where ticket_id = $1`, [id])
+        if (number_ticket.rowCount == 0) {
+            return res.status(400).send(UPDATE_ERROR)
+        }
+        const ticket = await client.query(`UPDATE ticket SET price = $1, match_day = $2, 
+        quantity = $3 WHERE ticket_id = $4 RETURNING *`, [price, match_day, quantity, id])
+        return res.status(200).send(`Ticket modified with price: ${ticket.rows[0].price}, 
+        match_day: ${ticket.rows[0].match_day}, quantity: ${ticket.rows[0].quantity}`)
     } catch (e) {
         console.log(e)
-        return res.send(errors.throw_error(e))
+        return res.status(400).send(errors.throw_error(UPDATE_ERROR))
     }
 }
 const deleteTicket = async (req: Express.Request, res: Express.Response) => {
     const id = parseInt(req.params.id)
     const DELETE_ERROR = errors.ERROR_MESSAGE('DELETE a ticket')
     try {
-        await client.query(`select * from ticket where ticket_id = $1`,
-            [id], async (error: Error, results: typeof QueryResult) => {
-                if (error) {
-                    return res.status(400).send(DELETE_ERROR)
-                }
-                if (results.rowCount == 0) {
-                    return res.status(400).send(DELETE_ERROR)
-                }
-                await client.query(`DELETE FROM ticket WHERE ticket_id = $1 RETURNING *`, [id],
-                    (error: Error, results: typeof QueryResult) => {
-                        if (error) {
-                            return res.status(400).send(DELETE_ERROR)
-                        }
-                        return res.status(200).send(`Ticket deleted with ID: ${results.rows[0].ticket_id}`)
-                    })
-            })
+        const ticket = await client.query(`select * from ticket where ticket_id = $1`, [id])
+        if (ticket.rowCount == 0) {
+            return res.status(400).send(DELETE_ERROR)
+        }
+        await client.query(`DELETE FROM ticket WHERE ticket_id = $1 RETURNING *`, [id])
+        return res.status(200).send(`Ticket deleted with ID: ${ticket.rows[0].ticket_id}`)
     } catch (e) {
         console.log(e)
-        return res.send(errors.throw_error(e))
+        return res.status(400).send(errors.throw_error(DELETE_ERROR))
     }
 }
+
 export = {
     getTicket, getNumberOfTickets, createTicket, updateTicket, deleteTicket
 }
