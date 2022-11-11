@@ -108,6 +108,7 @@ const deleteUser = async (req: Express.Request, res: Express.Response) => {
         return res.status(400).send(errors.throw_error(DELETE_ERROR))
     }
 }
+
 export = {
     getUsers, createUser, updateUser, deleteUser
 }
