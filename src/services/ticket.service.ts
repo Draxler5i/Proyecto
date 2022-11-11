@@ -1,6 +1,7 @@
 const { QueryResult } = require(`pg`)
 const client = require(`../postgres/connection`)
 const errors = require(`./errorMessages/errors`)
+
 const getTicket = async (_req: Express.Request, res: Express.Response) => {
     try {
         const tickets = await client.query(`SELECT * from ticket`)

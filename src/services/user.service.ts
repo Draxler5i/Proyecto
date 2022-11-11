@@ -1,4 +1,3 @@
-const { QueryResult } = require(`pg`)
 const client = require(`../postgres/connection`)
 const validate = require(`./validations/validationFunctions`)
 const encrypt = require(`../security/encryption`)

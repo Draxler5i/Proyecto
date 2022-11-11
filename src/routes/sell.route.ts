@@ -2,6 +2,7 @@ const sellService = require('../services/sell.service')
 const { Router } = require('express')
 
 const route = Router()
+
 route
     .get('/', sellService.getSellsDetails)
     .get('/:id', sellService.getSellsDetailsById)

@@ -61,14 +61,14 @@ const getBalance = async (req: Express.Request, res: Express.Response) => {
         const balance = await client.query(`select sum(ca.saldo) as saldo from 
         creditCard as ca where ca.user_id=$1`, [user_id])
         if (parseFloat(balance.rows[0].saldo) > 0) {
-            return res.send(`You have ${balance.rows[0].saldo} Bs.`)
+            return res.status(200).send(`You have ${balance.rows[0].saldo} Bs.`)
         } else {
-            return res.send(`There is NO enough balance to buy tickets. 
+            return res.status(200).send(`There is NO enough balance to buy tickets. 
                     You have ${balance.rows[0].saldo} Bs.`)
         }
     } catch (e) {
         console.log(e)
-        return res.send(errors.throw_error(errors.ERROR_MESSAGE('GET balance')))
+        return res.status(400).send(errors.throw_error(errors.ERROR_MESSAGE('GET balance')))
     }
 }
 const createSell = async (req: Express.Request, res: Express.Response) => {
@@ -138,7 +138,7 @@ const returnSell = async (req: Express.Request, res: Express.Response) => {
         }
         await client.query(`delete from public.detail where sells_id=$1`, [id])
         await client.query(`delete from public.sells where sells_id=$1`, [id])
-        res.status(201).send(`Sell returned with sell ID: ${id}`)
+        res.status(200).send(`Sell returned with sell ID: ${id}`)
         return await client.query(`COMMIT;`)
     } catch (e) {
         await client.query(`ROLLBACK;`)
@@ -194,7 +194,7 @@ const deleteSell = async (req: Express.Request, res: Express.Response) => {
     } catch (e) {
         await client.query(`ROLLBACK;`)
         console.log(e)
-        return res.send(errors.throw_error(DELETE_SELL_ERROR))
+        return res.status(400).send(errors.throw_error(DELETE_SELL_ERROR))
     }
 }
 

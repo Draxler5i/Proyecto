@@ -24,7 +24,7 @@ const createStadium = async (req: Express.Request, res: Express.Response) => {
         stadium address: ${stadium.address}`)
     } catch (e) {
         console.log(ERROR_STADIUM)
-        return res.send(errors.throw_error(ERROR_STADIUM))
+        return res.status(400).send(errors.throw_error(ERROR_STADIUM))
     }
 }
 const updateStadium = async (req: Express.Request, res: Express.Response) => {
@@ -44,7 +44,7 @@ const updateStadium = async (req: Express.Request, res: Express.Response) => {
         return res.status(200).send(`Stadium modified with stadium name: ${stadium_name}, address: ${address}`)
     } catch (e) {
         console.log(e)
-        return res.send(errors.throw_error(UPDATE_STADIUM_ERROR))
+        return res.status(400).send(errors.throw_error(UPDATE_STADIUM_ERROR))
     }
 }
 const deleteStadium = async (req: Express.Request, res: Express.Response) => {
@@ -60,7 +60,7 @@ const deleteStadium = async (req: Express.Request, res: Express.Response) => {
 
     } catch (e) {
         console.log(e)
-        return res.send(errors.throw_error(DELETE_ERROR))
+        return res.status(400).send(errors.throw_error(DELETE_ERROR))
     }
 }
 
