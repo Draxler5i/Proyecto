@@ -1,4 +1,3 @@
-import { pathToFileURL } from "url";
 import pool from "../database/connection";
 import creditCardService from "./creditCard.service";
 
@@ -11,9 +10,7 @@ const getUsers = async () => {
     }
 }
 
-const existUser = async (
-    name: string,
-) => {
+const existentUserByName = async (name: string) => {
     try {
         const user = await pool.query('SELECT count(*) FROM users WHERE user_name=$1 ', [name])
         return Number(user.rows[0].count);
@@ -95,7 +92,7 @@ card:{
                 user.state
             ],
         )
-        const creditCard= await creditCardService.postCreditCard(card,postUsers.rows[0].id_users )
+        await creditCardService.postCreditCard(card,postUsers.rows[0].id_users )
         return await pool.query('COMMIT')
     } catch (error) {
         await pool.query('ROLLBACK')
@@ -120,5 +117,5 @@ export = {
     postUser,
     deleteUser,
     getuserById,
-    existUser
+    existentUserByName
 }

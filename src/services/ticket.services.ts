@@ -1,4 +1,4 @@
-const pool = require('../database/connection')
+import pool from "../database/connection";
 import creditCardService from "./creditCard.service";
 
 const getTicket = async () => {
@@ -24,7 +24,6 @@ const putTicket = async (ticket: {
     category?: string,
     match_date?: Date,
     stadio?: string
-
 }, id: number) => {
     try {
         const updateTicket = await pool.query

@@ -1,7 +1,6 @@
 import creditCardService from "./creditCard.service";
 import ticketServices from "./ticket.services";
-
-const pool = require('../database/connection')
+import pool from "../database/connection";
 
 const postSell = async (ticket: {
     price: number,
@@ -12,11 +11,11 @@ const postSell = async (ticket: {
     try {
         await pool.query('BEGIN')
         const creditCard = await creditCardService.getCreditCard(ticket.idUser)
-        if (ticket.price < creditCard.rows[0].balance) {
+        if (ticket.price <= creditCard.rows[0].balance) {
             const debit = creditCard.rows[0].balance - ticket.price
             const ticketPost = await ticketServices.postTicket(ticket)
             await creditCardService.saveBalance(debit, ticket.idUser)
-            const ticketPrice = await pool.query('SELECT precio FROM tickets WHERE id_tickets=$1', [ticketPost.rows[0].id_tickets])
+            await pool.query('SELECT precio FROM tickets WHERE id_tickets=$1', [ticketPost.rows[0].id_tickets])
         }
         return await pool.query('COMMIT')
     } catch (error) {

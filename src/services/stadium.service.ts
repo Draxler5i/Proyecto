@@ -1,4 +1,4 @@
-const pool = require('../database/connection')
+import pool from "../database/connection";
 
 const getStadium = async () => {
     try {

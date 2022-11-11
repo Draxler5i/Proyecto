@@ -1,5 +1,4 @@
-const pool = require('../database/connection')
-
+import pool from "../database/connection";
 const getCreditCard = async (idUser: number) => {
     try {
         const creditCard = await pool.query('SELECT * FROM creditcard WHERE id_user=$1', [idUser])
