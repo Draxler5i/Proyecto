@@ -51,14 +51,11 @@ const createUser = async (req: Express.Request, res: Express.Response) => {
                 client.query(`INSERT INTO creditCard(card_number, card_name, expiration, cvv, user_id, saldo) 
                 VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
                     [card_number, card_name, expiration, cvv, results.rows[0].user_id, saldo],
-                    (error: Error, res: typeof QueryResult) => {
+                    (error: Error, result: typeof QueryResult) => {
                         if (error) {
                             return res.status(400).send(errors.ERROR_MESSAGE('CREATE a card'))
                         }
-                        return res.status(201).send(`Card user added with user name: ${results.rows[0].name}, 
-                        lastname: ${results.rows[0].last_name}, email: ${results.rows[0].email}, 
-                        age: ${results.rows[0].age}, nit: ${results.rows[0].nit}, card name: ${res.rows[0].card_name}, 
-                        expiration: ${res.rows[0].expiration}}`)
+                        return res.status(201).send(`User added with user name: ${results.rows[0].name}, lastname: ${results.rows[0].last_name}, email: ${results.rows[0].email}, age: ${results.rows[0].age}, nit: ${results.rows[0].nit}, card name: ${result.rows[0].card_name}, expiration: ${result.rows[0].expiration}`)
                     })
             })
         //return await client.query(`COMMIT`)
