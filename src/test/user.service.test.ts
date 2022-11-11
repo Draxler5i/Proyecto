@@ -39,8 +39,9 @@ describe("UserService", () => {
         cvv: 456,
         saldo: 2000
       }
+
       const create_user = await api.post('/v1/users').send(user)
-      console.log()
+
       expect(create_user).toEqual(
         expect.objectContaining({
           text: `User added with user name: Josh, lastname: Merida, email: josh_16@gmail.com, age: 18, nit: 6948466, card name: josh merida, expiration: Tue May 02 2023 00:00:00 GMT-0600 (hora estándar central)`
@@ -54,7 +55,7 @@ describe("UserService", () => {
     })
     test('Delete user by id ', async () => {
       const ticketDeleted = await api.delete('/v1/users/113')
-      console.log(ticketDeleted)
+
       expect(ticketDeleted).toEqual(
         expect.objectContaining({ text: 'An error occured when trying to DELETE user' })
       )
@@ -62,7 +63,7 @@ describe("UserService", () => {
     })
     test('Delete ticket', async () => {
       const ticketDeleted = await api.delete('/v1/users/116')
-      console.log(ticketDeleted)
+
       expect(ticketDeleted).toEqual(
         expect.objectContaining({ text: `User and user's cards deleted with ID: 116` })
       )
