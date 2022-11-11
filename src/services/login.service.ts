@@ -1,4 +1,3 @@
-const express = require('express')
 const jwt = require('jsonwebtoken')
 
 const login = async (req: any, res: any) => {
@@ -11,10 +10,9 @@ const login = async (req: any, res: any) => {
         const token = jwt.sign({
             userName: req.body.userName,
             password: req.body.password,
-        }, process.env.TOKEN_SECRETO)
+        }, process.env.TOKEN_SECRET)
         res.json({
-            error: null,
-            data: "Bienvenido"
+            data: token
         })
     } catch (error) {
         throw (error)

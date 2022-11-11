@@ -1,11 +1,11 @@
 import { Router } from "express";
+import userController from "../controller/user.controller";
 
-const userServices = require('./services/userServices')
 const router = Router()
 
 router
-    .get('/users', userServices.getUsers)
-    .post('/users', userServices.postUser)
-    .put('/users/:id', userServices.putUser)
-    .delete('/users/:id', userServices.deleteUser)
+    .get('/users', userController.getUsersController)
+    .post('/users', userController.postUser)
+    .put('/users/:id', userController.updateUser)
+    .delete('/users/:id', userController.deleteUserController)
 export = router

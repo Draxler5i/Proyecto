@@ -1,8 +1,7 @@
 import { Router } from "express";
-
-const loginServices = require('./services/loginServices')
+import loginService from "../services/login.service";
 
 const route = Router()
 route
-    .post(' /login', loginServices.login)
+    .post(' /login', loginService.login)
 export = route
