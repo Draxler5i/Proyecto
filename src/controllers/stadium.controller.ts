@@ -45,13 +45,21 @@ const postNewStadium = async (req:Express.Request, res:Express.Response) => {
 
 const updateStadium = async (req:Express.Request, res:Express.Response) => {
 	const { id } = req.params
-	const {ticketsAvailable} = req.body
+	const {name, capacity, ticketsAvailable} = req.body
 	const existingStadium = await Stadium.findById(id)
 	if(!existingStadium){
 		return res.status(400).send({
 			status: "FAILED",
 			data:{
 				error: "The stadium you are looking for doesn't exist. Please check the id"
+			}
+		})
+	}
+	if(name || capacity){
+		return res.status(400).send({
+			status: "FAILED",
+			data:{
+				error: "You can only modify the number of tickets for this stadium"
 			}
 		})
 	}

@@ -29,8 +29,24 @@ const postNewTicket = async (req:Express.Request, res:Express.Response) => {
 		})
 	}
 	try {
-		const user:any = await User.findById(user_id)
-		const stadium:any = await Stadium.findById(stadium_id)
+		const user = await User.findById(user_id)
+		if(!user){
+			return res.status(400).send({
+				status: "FAILED",
+				data:{
+					error: "The user you are looking for doesn't exist. Please check the user_id"
+				}
+			})
+		}
+		const stadium = await Stadium.findById(stadium_id)
+		if(!stadium){
+			return res.status(400).send({
+				status: "FAILED",
+				data:{
+					error: "The stadium you are looking for doesn't exist. Please check the stadium_id"
+				}
+			})
+		}
 		if(user.balance < price){
 			return res.status(400).send({
 				status: "FAILED",
@@ -72,16 +88,26 @@ const postNewTicket = async (req:Express.Request, res:Express.Response) => {
 
 const updateTicket = async (req:Express.Request, res:Express.Response) => {
 	const { id } = req.params
-	if(!id){
+	const { price, currency, match_day, stadium_id, stadium_name, seat, user_id } = req.body
+	const existingTicket = await Ticket.findById(id)
+	if(!existingTicket){
 		return res.status(400).send({
 			status: "FAILED",
 			data:{
-				error: "ID is missing or is empty"
+				error: "The ticket you are looking for doesn't exist. Please check the id"
+			}
+		})
+	}
+	if(price || currency || match_day || stadium_id || stadium_name || user_id){
+		return res.status(400).send({
+			status: "FAILED",
+			data:{
+				error: "You can only modify the seat of your ticket, please delete the ticket if you want to change any other parameter"
 			}
 		})
 	}
 	try {
-		const data = await Ticket.updateOne({ _id:id }, { $set: req.body})
+		const data = await Ticket.findByIdAndUpdate(id, {$set: {seat: seat}}, {new: true})
 		return res.status(200).send({status:"OK", data, message:`Ticket updated with ID:${id}`})
 	} 
 	catch (error) {
@@ -91,11 +117,12 @@ const updateTicket = async (req:Express.Request, res:Express.Response) => {
 
 const deleteTicket = async (req:Express.Request, res:Express.Response) => {
 	const { id } = req.params
-	if(!id){
+	const existingTicket = await Ticket.findById(id)
+	if(!existingTicket){
 		return res.status(400).send({
 			status: "FAILED",
 			data:{
-				error: "ID is missing or is empty"
+				error: "The ticket you are looking for doesn't exist. Please check the id"
 			}
 		})
 	}
@@ -113,8 +140,8 @@ const deleteTicket = async (req:Express.Request, res:Express.Response) => {
 		stadium.ticketsAvailable = stadium.ticketsAvailable + 1
 		await user.save()
 		await stadium.save()
-		const dataToSave = await Ticket.deleteOne({_id: id})
-		return res.status(200).send({status:"OK", dataToSave, message:`Ticket deleted with ID:${id}`})
+		await Ticket.findByIdAndDelete(id)
+		return res.status(200).send({status:"OK", message:`Ticket deleted with ID: ${id}`})
 	} 
 	catch (error) {
 		res.send({ status:"FAILED", data: { error }})
