@@ -4,6 +4,6 @@ import { Router } from "express";
 const router = Router()
 
 router
-    .post('./saleTicket/:id', saleController.ticketSale)
+    .post('/saleTicket', saleController.ticketSale)
 export = router
 

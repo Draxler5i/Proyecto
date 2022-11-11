@@ -16,7 +16,7 @@ const putStadium = async (stadium: {
 }) => {
     try {
         const updateStadium = await pool.query
-            ('UPDATE stadium set name=?,capacity=? WHERE id_stadium=?',
+            ('UPDATE stadium set name=$1,capacity=$2 WHERE id_stadium=$3',
                 [
                     stadium.name,
                     stadium.capacity,
@@ -35,23 +35,22 @@ const postStadium = async (stadium: {
     capacity: number,
 }) => {
     try {
-        const postStadium = await pool.query
-            ('INSERT INTO stadium (name, capacity) values(?,?)',
+        const postStadiums = await pool.query('INSERT INTO stadium (stadium_name, capacity) values($1 , $2)',
                 [
                     stadium.name,
                     stadium.capacity
                 ]
             )
-        return postStadium;
+        return postStadiums;
     } catch (error) {
-        console.log(`something go wrong post the stadium ${error}`);
+        console.log(`something go wrong post the stadium service ${error}`);
         throw (error)
     }
 }
 
 const deleteStadium = async (id: number) => {
     try {
-        const stadiumDelete = await pool.query('DELETE FROM stadium WHERE id_stadium =?', id)
+        const stadiumDelete = await pool.query('DELETE FROM stadium WHERE id_stadium =$1', [id])
         return stadiumDelete
     } catch (error) {
         console.log(`Something go wrong delete stadium service ${error}`);
@@ -61,7 +60,7 @@ const deleteStadium = async (id: number) => {
 
 const getStadiumCapacity = async (id: number) => {
     try {
-        const stadiumCapacity = await pool.query('SELECT capacity FROM stadium WHERE id_stadium=?', id)
+        const stadiumCapacity = await pool.query('SELECT capacity FROM stadium WHERE id_stadium=?', [id])
         return stadiumCapacity
     } catch (error) {
         console.log(`Something go wrong getStadium stadium service ${error}`);

@@ -4,10 +4,10 @@ import ticketServices from "../services/ticket.services"
 const TICKET_ALLOWED = 10
 
 const ticketSale = async (req: any, res: any) => {
-    const { idUser, idTicket } = req.body
-    if (!idUser || !idTicket) {
+    const { idUser, ticket } = req.body
+    if (!idUser || !ticket) {
         res.status(400).send({
-            status: 'FAILED', data: { error: 'Id is missing' }
+            status: 'FAILED', data: { error: 'One field is missing ticket or idUser' }
         })
     }
     try {
@@ -17,7 +17,8 @@ const ticketSale = async (req: any, res: any) => {
                 status: 'FAILED', data: { error: 'Exceeded number of ticket can you put charge' }
             })
         }
-        const saleTicket = await saleService.postSell(req.body.idUser, req.body.idTicket)
+        req.body.ticket.idUser = idUser
+        const saleTicket = await saleService.postSell(req.body.ticket)
         res.status(201).send({
             status: 'SUCESS',
             data: saleTicket,
@@ -26,7 +27,6 @@ const ticketSale = async (req: any, res: any) => {
         console.log(`Something go wrong in the sale controller ${error}`);
         res.send({ status: 'Failed', data: { error } })
     }
-
 }
 
 export = {

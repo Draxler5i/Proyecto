@@ -12,13 +12,13 @@ const getStadiums = async (req: any, res: any) => {
 
 const postStadium = async (req: any, res: any) => {
     try {
-        const postStadium = await stadiumService.postStadium(req.body) 
+        const postStadiums = await stadiumService.postStadium(req.body) 
         res.status(201).send({
             status: `SUCCESS`,
-            data: postStadium,
+            data: postStadiums,
         })
     } catch (error) {
-        console.log(`Something go wrong with postStadium Controller `);
+        console.log(`Something go wrong with postStadium Controller  ${error}`);
         res.status(500).send({ data: error })
     }
 }

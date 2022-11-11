@@ -14,21 +14,11 @@ const getUsersController = async (req: any, res: any) => {
 
 const postUser = async (req: any, res: any) => {
     try {
-        const postUser = await userServices.postUser(
-            {
-                "name": "walter",
-                "password": "asdas",
-                "email": "walter@asds.com",
-                "cellphone": 654,
-                "age": 45,
-                "address": "Monas",
-                "country": "string",
-                "state": true
-            }
-        )
+        const postUsers = await userServices.postUser(req.body.user, req.body.card)
+
         res.status(201).send({
             status: `SUCCESS`,
-            data: postUser,
+            data: postUsers,
         })
     } catch (error) {
         console.log(`Something go wrong with postUser Controller  ${error}`);

@@ -2,7 +2,8 @@ const pool = require('../database/connection')
 
 const getCreditCard = async (idUser: number) => {
     try {
-        return await pool.query('SELECT * FROM creditcard WHERE id_user=?', idUser)
+        const creditCard = await pool.query('SELECT * FROM creditcard WHERE id_user=$1', [idUser])
+        return creditCard
     } catch (error) {
         console.log(`something go wrong get creditCard ${error}`);
         throw (error)
@@ -21,26 +22,26 @@ const postCreditCard = async (
     idUser: number) => {
     try {
         const postCreditCard = await pool.query(
-            'INSERT INTO creditcard (credit_name, credit_number, cvv, expiration_date,balance, id_user ) values(?,?,?,?,?,?)',
+            'INSERT INTO creditcard (credit_name, credit_number, cvv, expiration_date,balance, id_user ) values($1,$2,$3,$4,$5,$6)',
             [
                 card.credit_name,
                 card.credit_number,
                 card.cvv,
-                card.expiration_date,
+                new Date(card.expiration_date),
                 card.balance,
                 idUser
             ]
         )
         return postCreditCard
     } catch (error) {
-        console.log(`something go wrong post creditCard ${error}`);
+        console.log(`something go wrong post creditCard Service ${error}`);
         throw (error)
     }
 }
 
 const saveBalance = async (balance: number, idUser: number) => {
     try {
-        const updateBalance = await pool.query('UPDATE creditCard SET balance=? WHERE id_user=?',
+        const updateBalance = await pool.query('UPDATE creditCard SET balance=$1 WHERE id_user=$2',
             [
                 balance,
                 idUser
@@ -51,7 +52,6 @@ const saveBalance = async (balance: number, idUser: number) => {
         console.log(`Something go wrong put balance creditCard service ${error}`);
         throw (error)
     }
-
 }
 
 const putCrediCard = async (
@@ -84,7 +84,7 @@ const putCrediCard = async (
 
 const deleteCreditCard = async (id: number) => {
     try {
-        return await pool.query('DELETE FROM creditcard WHERE id_credit =?', id)
+        return await pool.query('DELETE FROM creditcard WHERE id_credit =?', [id])
     } catch (error) {
         console.log(`Something go wrong delete creditCard service ${error}`);
         throw (error)
