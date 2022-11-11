@@ -2,8 +2,8 @@ const jwt = require('jsonwebtoken')
 
 const login = async (req: any, res: any) => {
     try {
-        const { userName, password } = req.body
-        if (!userName || !password) {
+        const { name, password } = req.body
+        if (!name || !password) {
             throw res.status(400)
         }
 
@@ -19,7 +19,7 @@ const login = async (req: any, res: any) => {
     }
 }
 
-export = {
+module.exports = {
     login,
 }
 

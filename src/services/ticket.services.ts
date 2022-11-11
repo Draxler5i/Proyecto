@@ -34,7 +34,7 @@ const putTicket = async (ticket: {
     }
 }
 
-const getTicketByUserID = async (id: number) => { 
+const getTicketByUserID = async (id: number) => {
     try {
         const ticketOwned = await pool.query(
             'SELECT count(*) FROM tickets WHERE id_user = ?', id

@@ -1,4 +1,6 @@
-const pool = require('../database/connection')
+// const pool = require('../database/connection')
+import pool from "../database/connection";
+
 
 const getUsers = async () => {
     try {
@@ -20,6 +22,7 @@ const getuserById = async (id: number) => {
 
 const putUser = async (user: {
     name?: string,
+    password?: string,
     email?: string,
     cellphone?: number,
     age?: number,
@@ -34,6 +37,7 @@ const putUser = async (user: {
                 user.name,
                 user.email,
                 user.cellphone,
+                user.password,
                 user.age,
                 user.address,
                 user.country,
@@ -51,22 +55,29 @@ const putUser = async (user: {
 const postUser = async (user: {
     name: string,
     email: string,
+    password: string,
     cellphone: number,
     age: number,
     address: string,
     country: string,
     state: boolean
+
 }) => {
     try {
+        console.log(user);
+
         const postUser = await pool.query(
-            'INSERT INTO user (name, email, cellphone, age, address, country, state) values(?, ?,?,?,?,?,?)',
-            [user.name,
-            user.email,
-            user.cellphone,
-            user.age,
-            user.address,
-            user.country,
-            user.state],
+            'INSERT INTO users (user_name, user_password, email, cellphone, age, address, country, state) values(?,?, ?,?,?,?,?,?)',
+            [
+                user.name,
+                user.password,
+                user.email,
+                user.cellphone,
+                user.age,
+                user.address,
+                user.country,
+                user.state
+            ],
         )
         return postUser
     } catch (error) {

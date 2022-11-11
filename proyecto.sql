@@ -112,6 +112,7 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id_users` int NOT NULL,
   `user_name` varchar(45) NOT NULL,
+  `user_password` varchar(45) NOT NULL,
   `cellphone` int NOT NULL,
   `age` int NOT NULL,
   `address` varchar(45) NOT NULL,

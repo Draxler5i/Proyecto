@@ -12,10 +12,10 @@ const PORT = process.env.PORT
 app.use(express.json())
 app.use(express.urlencoded({ extended: false })) 
 
-app.use('/api/users', userRouter)
-app.use('/api/tickets', ticketRouter)
-app.use('/api/login', loginRouter)
-app.use('/api/sale', saleRouter)
+app.use('/api', userRouter)
+app.use('/api', ticketRouter)
+app.use('/api', loginRouter)
+app.use('/api', saleRouter)
 
 app.listen(PORT, () => {
     console.log(`Server on port`, PORT)
