@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">34.61% </span>
+                <span class="strong">31.81% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>9/26</span>
+                <span class='fraction'>7/22</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/9</span>
+                <span class='fraction'>0/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/5</span>
+                <span class='fraction'>0/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">36% </span>
+                <span class="strong">33.33% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>9/25</span>
+                <span class='fraction'>7/21</span>
             </div>
         
             
@@ -106,12 +106,7 @@
 <a name='L41'></a><a href='#L41'>41</a>
 <a name='L42'></a><a href='#L42'>42</a>
 <a name='L43'></a><a href='#L43'>43</a>
-<a name='L44'></a><a href='#L44'>44</a>
-<a name='L45'></a><a href='#L45'>45</a>
-<a name='L46'></a><a href='#L46'>46</a>
-<a name='L47'></a><a href='#L47'>47</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<a name='L44'></a><a href='#L44'>44</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -119,10 +114,6 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -137,6 +128,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -156,43 +150,40 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const jwtt = require(`jsonwebtoken`)
-const { QueryResult } = require(`pg`)
 const client = require(`../postgres/connection`)
 const encrypt = require(`../security/encryption`)
-client.connect()
 &nbsp;
 const login = <span class="fstat-no" title="function not covered" >async (r</span>eq: Express.Request, res: Express.Response) =&gt;<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" > {</span></span>
     const { email, password } = <span class="cstat-no" title="statement not covered" >req.body</span>
 <span class="cstat-no" title="statement not covered" >    if (email &amp;&amp; password) {</span>
-<span class="cstat-no" title="statement not covered" >        await client.query(`SELECT * FROM public.user WHERE email = $1`, [email],</span>
-<span class="fstat-no" title="function not covered" >            (e</span>rror: Error, results: typeof QueryResult) =&gt; {
-<span class="cstat-no" title="statement not covered" >                <span class="missing-if-branch" title="if path not taken" >I</span>if (error){</span>
-<span class="cstat-no" title="statement not covered" >                    return res.send(error)</span>
-                }
-<span class="cstat-no" title="statement not covered" >                <span class="missing-if-branch" title="if path not taken" >I</span>if (results.rows.length === 0){</span>
-<span class="cstat-no" title="statement not covered" >                    return res.send(`Incorrect email`)</span>
-                }
-<span class="cstat-no" title="statement not covered" >                <span class="missing-if-branch" title="if path not taken" >I</span>if (!encrypt.validatePassword(password, results.rows[0].password)){</span>
-<span class="cstat-no" title="statement not covered" >                    return res.send(`Incorrect Password!`)</span>
-                }
-                const token = <span class="cstat-no" title="statement not covered" >jwtt.sign(</span>
-                    { email },
-                    process.env.TOKEN,
-                    {
-                        expiresIn: `1h`,
-                    }
-                )
-<span class="cstat-no" title="statement not covered" >                return res.send(token)</span>
+        const user_data = <span class="cstat-no" title="statement not covered" >await client.query(`SELECT * FROM public.user WHERE email = $1`, [email])</span>
+<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (user_data.rows.length === 0) {</span>
+<span class="cstat-no" title="statement not covered" >            return res.satatus(400).send(`Incorrect email`)</span>
+        }
+<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (!encrypt.validatePassword(password, user_data.rows[0].password)) {</span>
+<span class="cstat-no" title="statement not covered" >            return res.status(400).send(`Incorrect Password!`)</span>
+        }
+        const token = <span class="cstat-no" title="statement not covered" >jwtt.sign(</span>
+            { email },
+            process.env.TOKEN,
+            {
+                expiresIn: `1h`,
+            }
+        )
+<span class="cstat-no" title="statement not covered" >        return res.status(200).send(</span>
+            {
+                status: 'OK',
+                token: token
             })
     } else {
-<span class="cstat-no" title="statement not covered" >        return res.send(`Please enter email and Password!`)</span>
+<span class="cstat-no" title="statement not covered" >        return res.status(200).send(`Please enter email and Password!`)</span>
     }
 }
 const home = <span class="fstat-no" title="function not covered" >(r</span>eq: Express.Request, res: Express.Response) =&gt; {
 <span class="cstat-no" title="statement not covered" >    if (req.session.loggedin) {</span>
-<span class="cstat-no" title="statement not covered" >        return res.send(`Welcome back, ` + req.session.email + `!`)</span>
+<span class="cstat-no" title="statement not covered" >        return res.status(200).send(`Welcome back, ` + req.session.email + `!`)</span>
     } else {
-<span class="cstat-no" title="statement not covered" >        return res.send(`Please login to view this page!`)</span>
+<span class="cstat-no" title="statement not covered" >        return res.status(403).send(`Please login to view this page!`)</span>
     }
 }
 const welcome = <span class="fstat-no" title="function not covered" >(r</span>eq: Express.Request, res: Express.Response) =&gt; {
@@ -208,7 +199,7 @@ export = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2022-11-11T14:38:53.427Z
+                at 2022-11-12T00:20:14.352Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
