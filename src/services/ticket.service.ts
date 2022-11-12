@@ -28,21 +28,16 @@ const createTicket = async (req: Express.Request, res: Express.Response) => {
         return res.status(400).send(errors.ERROR_VARIABLE)
     }
     try {
-        await client.query(`INSERT INTO ticket ( price, currency, match_day, stadium_id, type, quantity ) 
+        const ticket = await client.query(`INSERT INTO ticket ( price, currency, match_day, stadium_id, type, quantity ) 
         VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-            [price, currency, match_day, stadium_id, type, quantity],
-            (error: Error, results: typeof QueryResult) => {
-                if (error) {
-                    return res.status(400).send(CREATE_ERROR)
-                }
-                return res.status(201).send(`Ticket added with price: ${results.rows[0].price}, 
-                currency: ${results.rows[0].currency}, match_day: ${results.rows[0].match_day},
-                stadium id: ${results.rows[0].stadium_id}, type: ${results.rows[0].type}, 
-                quantity: ${results.rows[0].quantity}`)
-            })
+            [price, currency, match_day, stadium_id, type, quantity])
+        return res.status(201).send(`Ticket added with price: ${ticket.rows[0].price}, 
+                currency: ${ticket.rows[0].currency}, match_day: ${ticket.rows[0].match_day},
+                stadium id: ${ticket.rows[0].stadium_id}, type: ${ticket.rows[0].type}, 
+                quantity: ${ticket.rows[0].quantity}`)
     } catch (e) {
         console.log(e)
-        return res.status(400).send(errors.throw_error(e))
+        return res.status(400).send(errors.throw_error(CREATE_ERROR))
     }
 }
 const updateTicket = async (req: Express.Request, res: Express.Response) => {
